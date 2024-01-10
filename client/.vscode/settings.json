@@ -1,0 +1,14 @@
+{
+    "java.project.sourcePaths": [
+        "src\\main",
+        "src\\starter",
+        "src\\test",
+        "vscodeshared\\src\\main",
+        "vscodeshared\\src\\starter",
+        "vscodeshared\\src\\test"
+    ],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar"
+    ]
+}

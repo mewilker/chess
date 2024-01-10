@@ -1,0 +1,189 @@
+package unitTest;
+
+import java.util.Collection;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import dataAccess.DataAccessException;
+import dataAccess.AuthDAO;
+import dataAccess.GameDAO;
+import dataAccess.UserDAO;
+import model.*;
+import request.*;
+import result.*;
+import service.*;
+
+public class ServicesTest {
+    
+    private AuthDAO authdao = new AuthDAO();
+    private UserDAO userdao = new UserDAO();
+    private GameDAO gamedao = new GameDAO();
+
+    Collection<User> users;
+    Collection<AuthToken> tokens;
+    Collection<UserGame> games;
+
+    private String token;
+    private UserGame game;
+    
+    @BeforeEach
+    public void setup() throws DataAccessException{
+        gamedao.clear();
+        authdao.clear();
+        userdao.clear();
+        userdao.insert(new User("username", "password", "email"));
+        token = authdao.genAuthToken("username");
+        userdao.insert(new User("me", "password", "email"));        
+        authdao.genAuthToken("me");
+        userdao.insert(new User("C3PO", "droid","Threepio@jeditemple.com"));
+        gamedao.insert(new UserGame("gamegame"));
+        int id = gamedao.insert(new UserGame("game"));
+        game = new UserGame("Sabaac");
+        game.changeID(id);
+        gamedao.insert(game);
+
+        users = userdao.getUsers();
+        tokens = authdao.getTokens();
+        games = gamedao.getGames();
+    }
+
+    @Test
+    @DisplayName("Positive Clear Test")
+    public void clearTest(){
+        ClearApp service = new ClearApp();
+        Result result = service.clearApp();
+        Assertions.assertNull(result.getMessage()); // this may need to change, getting 404 errors
+    }
+
+    @Test
+    @DisplayName("Register")
+    public void registerNew() throws DataAccessException{
+        RegisterService service = new RegisterService();
+        RegisterResult result = service.register(new RegisterRequest("R2-D2","skywalkers","Artoo@jeditemple.com"));
+        Assertions.assertNotNull(result.getAuthToken());
+        Assertions.assertEquals("R2-D2", result.getUsername());
+        tokens.add(new AuthToken("R2-D2", result.getAuthToken()));
+        users.add(new User("R2-D2", "skywalkers", "Artoo@jeditemple.com"));
+        Assertions.assertEquals(tokens, authdao.getTokens());
+        Assertions.assertEquals(users, userdao.getUsers());
+    }
+
+    @Test
+    @DisplayName("Repeat Register")
+    public void registerRepeat(){
+        RegisterService service = new RegisterService();
+        RegisterResult result = service.register(new RegisterRequest("username","password","email"));
+        RegisterResult message = new RegisterResult();
+        message.takenError();
+        Assertions.assertEquals(message.getMessage(), result.getMessage());
+    }
+
+    @Test
+    @DisplayName ("Login")
+    public void login() throws DataAccessException{
+        LoginService service = new LoginService();
+        LoginResult result = service.login(new LoginRequest("C3PO","droid"));
+        Assertions.assertNotNull(result.getAuthToken());
+        Assertions.assertEquals("C3PO", result.getUsername());
+        tokens.add(new AuthToken("C3PO", result.getAuthToken()));
+        Assertions.assertEquals(tokens, authdao.getTokens());
+    }
+
+    @Test
+    @DisplayName ("Wrong Password")
+    public void invalidPassword(){
+        LoginService service = new LoginService();
+        LoginResult result = service.login(new LoginRequest("C3PO", "skywalkers"));
+        LoginResult message = new LoginResult();
+        message.authError();
+        Assertions.assertEquals(message.getMessage(), result.getMessage());
+    }
+
+    @Test
+    @DisplayName ("Logout")
+    public void logout(){
+        LogoutService service = new LogoutService();
+        Result result = service.logout(new AuthorizedRequest(token));
+        Assertions.assertNull(result.getMessage());
+    }
+
+    @Test
+    @DisplayName("Logout with dead AuthToken")
+    public void badlogout(){
+        LogoutService service = new LogoutService();
+        Result result = service.logout(new AuthorizedRequest("aaa"));
+        Result message = new Result();
+        message.authError();
+        Assertions.assertEquals(message.getMessage(), result.getMessage());
+    }
+
+    @Test
+    @DisplayName("List Games")
+    public void listGames() throws DataAccessException{
+        ListGamesService service = new ListGamesService();
+        ListGamesResult result = service.listGames(new AuthorizedRequest(token));
+        Assertions.assertEquals(gamedao.getGames(), result.getGames());
+    }
+
+    @Test
+    @DisplayName("Unauthorized List Games")
+    public void unauthorizedGames(){
+        ListGamesService service = new ListGamesService();
+        ListGamesResult result = service.listGames(new AuthorizedRequest("aaa"));
+        ListGamesResult message = new ListGamesResult();
+        message.authError();
+        Assertions.assertEquals(message.getMessage(), result.getMessage());
+    }
+
+    @Test
+    @DisplayName("Create Game")
+    public void makeGame(){
+        CreateGameService service = new CreateGameService();
+        CreateGameResult result = service.createGame(new CreateGameRequest(token, "Dejarik"));
+        Assertions.assertNotNull(result.getGameID());
+    }
+
+    @Test
+    @DisplayName("Unauthorized creategame")
+    public void cantMakeGame(){
+        CreateGameService service = new CreateGameService();
+        CreateGameResult result = service.createGame(new CreateGameRequest("aaa", "Dejarik"));
+        CreateGameResult message = new CreateGameResult();
+        message.authError();
+        Assertions.assertEquals(message.getMessage(), result.getMessage());
+    }
+
+    @Test
+    @DisplayName("Join Game")
+    public void join() throws DataAccessException{
+        JoinGameService service = new JoinGameService();
+        Result result = service.joinGame(new JoinGameRequest(token, game.getGameID(),"BLACK"));
+        Assertions.assertNull(result.getMessage());
+        Assertions.assertEquals("username", gamedao.find(game.getGameID()).getBlackUsername());
+    }
+
+    @Test
+    @DisplayName("No spots open")
+    public void gamefull() throws DataAccessException{
+        game.setBlackUsername("C3PO");
+        gamedao.updateGame(game);
+        JoinGameService service = new JoinGameService();
+        Result result = service.joinGame(new JoinGameRequest(token, game.getGameID(),"BLACK"));
+        Result message = new Result();
+        message.takenError();
+        Assertions.assertEquals(message.getMessage(), result.getMessage());
+    }
+
+    @Test
+    @DisplayName("Unauthorized Join")
+    void joinloggedout(){
+        JoinGameService service = new JoinGameService();
+        Result result = service.joinGame(new JoinGameRequest("aaa", game.getGameID(),"BLACK"));
+        Result message = new Result();
+        message.authError();
+        Assertions.assertEquals(message.getMessage(), result.getMessage());
+    }
+}
