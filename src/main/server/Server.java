@@ -8,7 +8,7 @@ public class Server {
     public static void main(String[] args){
         new Server().run();
         Spark.awaitInitialization();
-        System.out.println("finished");
+        System.out.println("Server is up and running!");
     }
 
     private void run(){
