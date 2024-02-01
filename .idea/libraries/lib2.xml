@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="lib2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/client/lib/junit-platform-engine-1.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/client/lib/junit-jupiter-api-5.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/client/lib/gson-2.10.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/client/lib/junit-jupiter-params-5.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/client/lib/websocket-api-9.4.31.v20200723.jar!/" />
+      <root url="jar://$PROJECT_DIR$/client/lib/junit-platform-commons-1.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/client/lib/slf4j-simple-1.7.36.jar!/" />
+      <root url="jar://$PROJECT_DIR$/client/lib/junit-jupiter-engine-5.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/client/lib/junit-jupiter-5.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/client/lib/tyrus-standalone-client-1.15.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

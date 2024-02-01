@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="lib3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/shared/lib/gson-2.10.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/shared/lib/junit-platform-engine-1.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/shared/lib/junit-jupiter-5.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/shared/lib/junit-jupiter-engine-5.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/shared/lib/tyrus-standalone-client-1.15.jar!/" />
+      <root url="jar://$PROJECT_DIR$/shared/lib/junit-jupiter-api-5.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/shared/lib/junit-jupiter-params-5.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/shared/lib/junit-platform-commons-1.9.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
