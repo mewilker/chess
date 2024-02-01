@@ -14,7 +14,7 @@ import chess.ChessGame.TeamColor;
  * <li> both pieces are safe afterwards</ol>
  * The rook will jump the king
 */
-public class Rook extends Piece{
+public class Rook extends ChessPiece{
     
     //TODO implement castling
     boolean hasMoved = false;

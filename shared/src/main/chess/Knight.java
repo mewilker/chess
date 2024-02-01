@@ -8,7 +8,7 @@ import chess.ChessGame.TeamColor;
  * <li>can jump pieces
  * <li>can move in a 1x2 L shape</ul>
  */
-public class Knight extends Piece{
+public class Knight extends ChessPiece{
 
     /**
      * constructs a Knight given color and Piece type
@@ -32,7 +32,7 @@ public class Knight extends Piece{
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         moves.clear();
-        Position endpos = myPosition.clone();
+        ChessPosition endpos = myPosition.clone();
         endpos.up(2);
         endpos.right(1);
         addIfAvail(board, myPosition, endpos);

@@ -1,20 +1,20 @@
 package webSocketMessages.serverMessages;
 
-import chess.Board;
+import chess.ChessBoard;
 import chess.ChessGame.TeamColor;
 
 public class LoadBoard extends ServerMessage{
-    Board game;
+    ChessBoard game;
     TeamColor color;
     boolean check = false;
     boolean checkmate = false;
 
-    public LoadBoard(Board board) {
+    public LoadBoard(ChessBoard board) {
         super(ServerMessageType.LOAD_GAME);
         game = board;
     }
 
-    public Board getBoard (){
+    public ChessBoard getBoard (){
         return game;
     }
 

@@ -21,17 +21,17 @@ public class Deserializer implements JsonDeserializer{
         // TODO Auto-generated method stub
         switch (typeOfT.getTypeName()) {
                     case "chess.ChessPosition":
-                        return context.deserialize(json, Position.class);
+                        return context.deserialize(json, ChessPosition.class);
                     case "chess.ChessMove":
-                        return context.deserialize(json, Move.class);
+                        return context.deserialize(json, ChessMove.class);
                     case "chess.ChessBoard":
-                        return context.deserialize(json, Board.class);
+                        return context.deserialize(json, ChessBoard.class);
                     case "chess.ChessPiece":
                         GsonBuilder builder = new GsonBuilder();
                         builder.registerTypeAdapter(ChessPiece.class, pieceAdapter());
                         return builder.create().fromJson(json.getAsJsonObject().toString(), ChessPiece.class);
                     case "chess.ChessGame":
-                        return context.deserialize(json, GameImpl.class);
+                        return context.deserialize(json, ChessGame.class);
                     case "chess.GameImpl":
                     TeamColor teamColor = null;    
                     JsonObject jsonObject = json.getAsJsonObject();
@@ -43,12 +43,12 @@ public class Deserializer implements JsonDeserializer{
                                 case "WHITE" -> teamColor = TeamColor.WHITE;
                             }
                         }
-                        GameImpl result = new GameImpl();
+                        ChessGame result = new ChessGame();
                         result.setTeamTurn(teamColor);
-                        result.setBoard((Board)deserialize(playBoard, Board.class, context));
+                        result.setBoard((ChessBoard)deserialize(playBoard, ChessBoard.class, context));
                         return result;
                     case "chess.Board":
-                        ChessPiece[][] board = new Piece[8][8];
+                        ChessPiece[][] board = new ChessPiece[8][8];
                         HashSet<ChessPosition> white = new HashSet<>();
                         HashSet<ChessPosition> black = new HashSet<>();// this not upating
                         ChessPosition whiteKing;
@@ -63,7 +63,7 @@ public class Deserializer implements JsonDeserializer{
                         whiteKing = (ChessPosition) deserialize(jsonObject.get("whiteKing"), ChessPosition.class, context);
                         blackKing = (ChessPosition) deserialize(jsonObject.get("blackKing"), ChessPosition.class, context);
                         captured = (HashSet<ChessPiece>) deserialize(jsonObject.get("captured"), HashSet.class, context);
-                        return new Board(board, white, black, whiteKing, blackKing, captured);
+                        return new ChessBoard(board, white, black, whiteKing, blackKing, captured);
                     default:
                         break;
                 }

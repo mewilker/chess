@@ -16,7 +16,7 @@ import chess.ChessGame.TeamColor;
  * <li> both pieces are safe afterwards</ol>
  * The King will move two spaces towards the rook
  */
-public class King extends Piece{
+public class King extends ChessPiece{
     boolean hasMoved = false;
 
     /**
@@ -43,7 +43,7 @@ public class King extends Piece{
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         moves.clear();
-        Position endpos = myPosition.clone();
+        ChessPosition endpos = myPosition.clone();
         //up
         endpos.up(1);
         addIfAvail(board, myPosition, endpos);

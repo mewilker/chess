@@ -7,7 +7,7 @@ import chess.ChessGame.TeamColor;
 /**Queen piece
  * can move any number any direction
  */
-public class Queen extends Piece{
+public class Queen extends ChessPiece{
 
     /**
      * constructs a Queen given color and Piece type

@@ -13,7 +13,7 @@ import chess.ChessGame.TeamColor;
  * they are captured as if they made a 1x move
  * 
  */
-public class Pawn extends Piece{
+public class Pawn extends ChessPiece{
     
     boolean hasMoved = false;
 
@@ -53,13 +53,13 @@ public class Pawn extends Piece{
      */
     private void twoSpace(ChessBoard board, ChessPosition myPosition){
         if(!hasMoved(board, myPosition)){
-            Position endpos = myPosition.clone();
+            ChessPosition endpos = myPosition.clone();
             if (this.teamColor == TeamColor.WHITE){
                 endpos.up(1);
                 if (board.getPiece(endpos)== null){//first space empty
                     endpos.up(1); // second space empty
                     if (board.getPiece(endpos)== null){
-                        moves.add(new Move(myPosition, endpos, null));
+                        moves.add(new ChessMove(myPosition, endpos, null));
                     }
                 }
                 return;
@@ -69,7 +69,7 @@ public class Pawn extends Piece{
                 if (board.getPiece(endpos)== null){//first space empty
                     endpos.down(1); // second space empty
                     if (board.getPiece(endpos)== null){
-                        moves.add(new Move(myPosition, endpos, null));
+                        moves.add(new ChessMove(myPosition, endpos, null));
                     }
                 }
             }
@@ -84,7 +84,7 @@ public class Pawn extends Piece{
      * @param myPosition
      */
     private void oneSpace(ChessBoard board, ChessPosition myPosition){
-        Position endpos = myPosition.clone();
+        ChessPosition endpos = myPosition.clone();
         if (this.teamColor == TeamColor.WHITE){
             endpos.up(1);
             if (board.getPiece(endpos)== null){//first space empty
@@ -107,7 +107,7 @@ public class Pawn extends Piece{
      * @param myPosition
      */
     private void capture(ChessBoard board, ChessPosition myPosition){
-        Position endpos = myPosition.clone();
+        ChessPosition endpos = myPosition.clone();
         if (this.teamColor == TeamColor.WHITE){
             endpos.up(1);
             endpos.right(1);
@@ -151,25 +151,25 @@ public class Pawn extends Piece{
     private void checkPromote(ChessBoard board, ChessPosition myPosition, ChessPosition endpos){
         if (this.teamColor == TeamColor.WHITE){
             if (endpos.getRow()==8){
-                moves.add(new Move(myPosition, endpos, PieceType.BISHOP));
-                moves.add(new Move(myPosition, endpos, PieceType.QUEEN));
-                moves.add(new Move(myPosition, endpos, PieceType.ROOK));
-                moves.add(new Move(myPosition, endpos, PieceType.KNIGHT));
+                moves.add(new ChessMove(myPosition, endpos, PieceType.BISHOP));
+                moves.add(new ChessMove(myPosition, endpos, PieceType.QUEEN));
+                moves.add(new ChessMove(myPosition, endpos, PieceType.ROOK));
+                moves.add(new ChessMove(myPosition, endpos, PieceType.KNIGHT));
             }
             else{
-                moves.add(new Move(myPosition, endpos, null));
+                moves.add(new ChessMove(myPosition, endpos, null));
             }
             return;
         }
         else{ // TeamColor.BLACK
             if (endpos.getRow()==1){
-                moves.add(new Move(myPosition, endpos, PieceType.BISHOP));
-                moves.add(new Move(myPosition, endpos, PieceType.QUEEN));
-                moves.add(new Move(myPosition, endpos, PieceType.ROOK));
-                moves.add(new Move(myPosition, endpos, PieceType.KNIGHT));
+                moves.add(new ChessMove(myPosition, endpos, PieceType.BISHOP));
+                moves.add(new ChessMove(myPosition, endpos, PieceType.QUEEN));
+                moves.add(new ChessMove(myPosition, endpos, PieceType.ROOK));
+                moves.add(new ChessMove(myPosition, endpos, PieceType.KNIGHT));
             }
             else {
-                moves.add(new Move(myPosition, endpos, null));
+                moves.add(new ChessMove(myPosition, endpos, null));
             }
         }
     }

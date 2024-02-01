@@ -7,7 +7,7 @@ import chess.ChessGame.TeamColor;
 /**Bishop Piece
  * can move any number diagonally (not sideways)
  */
-public class Bishop extends Piece{
+public class Bishop extends ChessPiece{
 
     /**
      * constructs a Bishop given color and Piece type

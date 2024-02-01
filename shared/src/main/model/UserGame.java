@@ -1,8 +1,8 @@
 package model;
 
-import chess.Board;
+import chess.ChessBoard;
 import chess.ChessMove;
-import chess.GameImpl;
+import chess.ChessGame;
 import chess.InvalidMoveException;
 import chess.ChessGame.TeamColor;
 
@@ -12,7 +12,7 @@ public class UserGame {
     private String whiteUsername;
     private String blackUsername;
     private String gameName;
-    private GameImpl game;
+    private ChessGame game;
 
     
     /**
@@ -23,8 +23,8 @@ public class UserGame {
     public UserGame(String name){
         gameName = name;
         gameID = 0;
-        game = new GameImpl();//TODO: make sure the board is set up
-        Board board = new Board();
+        game = new ChessGame();//TODO: make sure the board is set up
+        ChessBoard board = new ChessBoard();
         board.resetBoard();
         game.setBoard(board);
     }
@@ -45,7 +45,7 @@ public class UserGame {
         return gameName;
     }
 
-    public GameImpl getGame() {
+    public ChessGame getGame() {
         return game;
     }
 
@@ -57,7 +57,7 @@ public class UserGame {
         this.whiteUsername = whiteUsername;
     }
 
-    public void updateGame(GameImpl game){
+    public void updateGame(ChessGame game){
         this.game = game;
     }
 
