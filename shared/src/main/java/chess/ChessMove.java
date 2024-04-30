@@ -45,9 +45,11 @@ public class ChessMove {
 
     @Override
     public int hashCode() {
+        final int prime = 31;
         int result = 1;
-        result = startPos.getRow()*31+ endPos.getRow();
-        result *= startPos.getColumn() + endPos.getColumn();
+        result = prime * result + ((startPos == null) ? 0 : startPos.hashCode());
+        result = prime * result + ((endPos == null) ? 0 : endPos.hashCode());
+        result = prime * result + ((promotion == null) ? 0 : promotion.hashCode());
         return result;
     }
 
