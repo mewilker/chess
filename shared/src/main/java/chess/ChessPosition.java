@@ -82,8 +82,10 @@ public class ChessPosition {
 
     @Override
     public int hashCode() {
+        final int prime = 31;
         int result = 1;
-        result = row*result+column;
+        result = prime * result + row;
+        result = prime * result + column;
         return result;
     }
 
