@@ -2,6 +2,8 @@ package chess;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
+
 import chess.ChessGame.TeamColor;
 
 /**
@@ -225,5 +227,17 @@ public class ChessPiece {
             case PAWN -> {return "p";}
         }
         return super.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        ChessPiece that=(ChessPiece) o;
+        return teamColor == that.teamColor && pieceType == that.pieceType && Objects.equals(moves, that.moves);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(teamColor, pieceType, moves);
     }
 }

@@ -1,7 +1,9 @@
 package chess;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 
 import chess.ChessGame.TeamColor;
 import chess.ChessPiece.PieceType;
@@ -263,4 +265,18 @@ public class ChessBoard {
         return out.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessBoard that=(ChessBoard) o;
+        return Arrays.deepEquals(board, that.board) && Objects.equals(white, that.white) && Objects.equals(black, that.black) && Objects.equals(whiteKing, that.whiteKing) && Objects.equals(blackKing, that.blackKing) && Objects.equals(captured, that.captured);
+    }
+
+    @Override
+    public int hashCode() {
+        int result=Objects.hash(white, black, whiteKing, blackKing, captured);
+        result=31 * result + Arrays.deepHashCode(board);
+        return result;
+    }
 }
