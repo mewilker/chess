@@ -212,4 +212,18 @@ public class ChessPiece {
         } while (addIfAvail(board, myPosition, endPos));
     }
 
+    @Override
+    public String toString() {
+        switch (pieceType){
+          case KING -> {
+            return "K";
+          }
+          case QUEEN ->{return "Q";}
+            case BISHOP -> {return "B";}
+            case KNIGHT -> {return "N";}
+            case ROOK -> {return "R";}
+            case PAWN -> {return "p";}
+        }
+        return super.toString();
+    }
 }
