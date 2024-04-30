@@ -54,7 +54,27 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        switch (pieceType){
+          case KING -> {
+            return new King(teamColor).pieceMoves(board,myPosition);
+          }
+          case QUEEN -> {
+            return new Queen(teamColor).pieceMoves(board,myPosition);
+          }
+          case BISHOP -> {
+            return new Bishop(teamColor).pieceMoves(board,myPosition);
+          }
+          case KNIGHT -> {
+            return new Knight(teamColor).pieceMoves(board,myPosition);
+          }
+          case ROOK -> {
+              return new Rook(teamColor).pieceMoves(board,myPosition);
+          }
+          case PAWN -> {
+            return new Pawn(teamColor).pieceMoves(board,myPosition);
+          }
+        }
+        throw new RuntimeException("Not a valid piecetype");
     }
 
     /**
