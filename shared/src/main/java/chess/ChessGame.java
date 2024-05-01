@@ -105,6 +105,9 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        if (playBoard.kingPos(teamColor) == null){
+            return false;
+        }
         TeamColor opponent = opponentColor(teamColor);
         Collection<ChessMove> moves = new HashSet<>();
         Collection<ChessPosition> places = playBoard.piecesOnBoard(opponent);

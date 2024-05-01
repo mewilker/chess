@@ -76,7 +76,15 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow()-1][position.getColumn()-1]= piece;
+        switch (piece.getPieceType()){
+            case KING -> board[position.getRow()-1][position.getColumn()-1] = new King(piece.getTeamColor());
+            case QUEEN -> board[position.getRow()-1][position.getColumn()-1] = new Queen(piece.getTeamColor());
+            case KNIGHT -> board[position.getRow()-1][position.getColumn()-1] = new Knight(piece.getTeamColor());
+            case BISHOP -> board[position.getRow()-1][position.getColumn()-1] = new Bishop(piece.getTeamColor());
+            case ROOK -> board[position.getRow()-1][position.getColumn()-1] = new Rook(piece.getTeamColor());
+            case PAWN -> board[position.getRow()-1][position.getColumn()-1] = new Pawn(piece.getTeamColor());
+            default -> board[position.getRow()-1][position.getColumn()-1]= piece;
+        }
         if(piece.getTeamColor()==TeamColor.WHITE){
             white.add(position);
             if(piece.getPieceType()==PieceType.KING){
@@ -183,6 +191,20 @@ public class ChessBoard {
             if(piece.getPieceType()==PieceType.KING){
                 whiteKing = move.getEndPosition();
             }
+            else if (piece.getPieceType()==PieceType.PAWN){
+                Pawn pawn = (Pawn) piece;
+                pawn.move(move.getStartPosition());
+                //check if move is enPassent
+                if (captive == null){
+                    if (move.getStartPosition().getColumn() != move.getEndPosition().getColumn()){
+                        ChessPosition captiveLocation = move.getEndPosition().clone();
+                        captiveLocation.down(1);
+                        captive = getPiece(captiveLocation);
+                        captured.add(captive);
+                        board[captiveLocation.getRow()-1][captiveLocation.getColumn()-1] = null;
+                    }
+                }
+            }
             if(captive!= null){
                 black.remove(move.getEndPosition());
             }
@@ -192,6 +214,19 @@ public class ChessBoard {
             black.add(move.getEndPosition());
             if(piece.getPieceType()==PieceType.KING){
                 blackKing = move.getEndPosition();
+            }
+            else if (piece.getPieceType()==PieceType.PAWN){
+                Pawn pawn = (Pawn) piece;
+                pawn.move(move.getStartPosition());
+                if (captive == null){
+                    if (move.getStartPosition().getColumn() != move.getEndPosition().getColumn()){
+                        ChessPosition captiveLocation = move.getEndPosition().clone();
+                        captiveLocation.up(1);
+                        captive = getPiece(captiveLocation);
+                        captured.add(captive);
+                        board[captiveLocation.getRow()-1][captiveLocation.getColumn()-1] = null;
+                    }
+                }
             }
             if(captive!= null){
                 white.remove(move.getEndPosition());
@@ -270,7 +305,7 @@ public class ChessBoard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that=(ChessBoard) o;
-        return Arrays.deepEquals(board, that.board) && Objects.equals(white, that.white) && Objects.equals(black, that.black) && Objects.equals(whiteKing, that.whiteKing) && Objects.equals(blackKing, that.blackKing) && Objects.equals(captured, that.captured);
+        return Arrays.deepEquals(board, that.board) && Objects.equals(whiteKing, that.whiteKing) && Objects.equals(blackKing, that.blackKing);
     }
 
     @Override

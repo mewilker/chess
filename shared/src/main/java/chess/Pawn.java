@@ -14,6 +14,7 @@ import chess.ChessGame.TeamColor;
  */
 public class Pawn extends ChessPiece{
   boolean hasMoved = false;
+  ChessPosition lastPos = null;
 
   /**
    * constructs a Pawn given color and Piece type
@@ -40,6 +41,7 @@ public class Pawn extends ChessPiece{
     twoSpace(board, myPosition);
     oneSpace(board, myPosition);
     capture(board, myPosition);
+    enPassant(board,myPosition);
     return moves;
   }
 
@@ -173,15 +175,50 @@ public class Pawn extends ChessPiece{
   }
 
   /**
+   * <p>Opponent double moves pawn</p>
+   * <p>It ends next to yours, skipping capture</p>
+   * <p>The immediate following turn, you can capture as if they had only moved one</p>*/
+  private void enPassant(ChessBoard board, ChessPosition myPos){
+    ChessPosition newLeft = myPos.clone();
+    ChessPosition newRight = myPos.clone();
+    newLeft.left(1);
+    newRight.right(1);
+    if (checkPass(newLeft, myPos, board)){
+      return;
+    }
+    checkPass(newRight, myPos, board);
+  }
+
+  private boolean checkPass(ChessPosition side, ChessPosition myPos, ChessBoard board){
+    if(board.onBoard(side)) {
+      ChessPiece opponent=board.getPiece(side);
+      if (opponent != null && opponent.getTeamColor() != getTeamColor() && opponent.pieceType == PieceType.PAWN) {
+        Pawn pawn=(Pawn) opponent;
+        if (pawn.getLastPosition()!= null){
+        if (pawn.getLastPosition().getRow() == 2 && pawn.getTeamColor() == TeamColor.WHITE
+                || pawn.getLastPosition().getRow() == 7 && pawn.getTeamColor() == TeamColor.BLACK) {
+          ChessPosition endPos = pawn.getLastPosition().clone();
+          if (pawn.getLastPosition().getRow() == 2) {
+            endPos.up(1);
+          } else {
+            endPos.down(1);
+          }
+          moves.add(new ChessMove(myPos, endPos, null));
+          return true;
+        }
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
    *
    * @param board
    * @param myPosition
    * @return true if has Moved
    */
   public boolean hasMoved(ChessBoard board, ChessPosition myPosition){
-    if (hasMoved){
-      return hasMoved;
-    }
     if (this.teamColor== TeamColor.WHITE){
       if (myPosition.getRow() !=2){
         hasMoved = true;
@@ -195,12 +232,21 @@ public class Pawn extends ChessPiece{
     return hasMoved;
   }
 
+  public ChessPosition getLastPosition(){
+    return lastPos;
+  }
+
   @Override
   public String toString() {
     return "p";
   }
 
-  public void move(){
+  public void move(ChessPosition myPosition){
     hasMoved = true;
+    lastPos = myPosition;
+  }
+
+  public void updatePosition(ChessPosition myPos){
+    lastPos = myPos;
   }
 }
