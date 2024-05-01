@@ -13,6 +13,7 @@ public class ChessGame {
     TeamColor teamTurn = TeamColor.WHITE;
     ChessBoard playBoard;
     TeamColor winner = null;
+    boolean enPassentAvailable = false;
     public ChessGame() {
         playBoard = new ChessBoard();
         playBoard.resetBoard();
@@ -54,6 +55,19 @@ public class ChessGame {
         Collection<ChessMove> moves = piece.pieceMoves(playBoard, startPosition.clone());
         HashSet<ChessMove> possmoves = new HashSet<>(moves);//makes a flippin deep clone of the piece moves
         HashSet<ChessMove> validmoves = new HashSet<>();
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN && enPassentAvailable){
+            ChessPosition newLeft = startPosition.clone();
+            ChessPosition newRight = startPosition.clone();
+            newLeft.left(1);
+            newRight.right(1);
+            ChessMove toadd = checkPass((Pawn) piece, newLeft, startPosition, playBoard);
+                if (toadd==null){
+                    toadd = checkPass((Pawn) piece, newRight, startPosition, playBoard);
+                }
+                if (toadd != null){
+                    validmoves.add(toadd);
+                }
+        }
         for (ChessMove move : possmoves){
             ChessBoard board = playBoard.clone();
             try{
@@ -73,6 +87,28 @@ public class ChessGame {
         return validmoves;
     }
 
+    private ChessMove checkPass(Pawn checkMe, ChessPosition side, ChessPosition myPos, ChessBoard board){
+        if(board.onBoard(side)) {
+            ChessPiece opponent=board.getPiece(side);
+            if (opponent != null && opponent.getTeamColor() != checkMe.getTeamColor() && opponent.pieceType == ChessPiece.PieceType.PAWN) {
+                Pawn pawn=(Pawn) opponent;
+                if (pawn.getLastPosition()!= null){
+                    if (pawn.getLastPosition().getRow() == 2 && pawn.getTeamColor() == TeamColor.WHITE
+                            || pawn.getLastPosition().getRow() == 7 && pawn.getTeamColor() == TeamColor.BLACK) {
+                        ChessPosition endPos = pawn.getLastPosition().clone();
+                        if (pawn.getLastPosition().getRow() == 2) {
+                            endPos.up(1);
+                        } else {
+                            endPos.down(1);
+                        }
+                        return new ChessMove(myPos, endPos, null);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Makes a move in a chess game
      *
@@ -84,11 +120,23 @@ public class ChessGame {
         ChessPosition start = move.getStartPosition().clone();
         if(playBoard.getPiece(start) != null && playBoard.getPiece(start).getTeamColor()==teamTurn){
             Collection<ChessMove> moves = validMoves(start.clone());
+            boolean trackmove = true;
+            if (playBoard.getPiece(start).getPieceType()== ChessPiece.PieceType.PAWN){
+                Pawn pawn = (Pawn) playBoard.getPiece(start);
+                trackmove = pawn.hasMoved(playBoard, start);
+            }
             for (ChessMove moveitr : moves){
                 if (moveitr.equals(move)){
                     invalidMove = false;
                     playBoard.movePiece(move);
                     advanceTurn();
+                    enPassentAvailable = false;
+                    if (!trackmove){
+                        Pawn pawn = (Pawn) playBoard.getPiece(move.getEndPosition().clone());
+                        if (pawn.hasMoved(playBoard, move.getEndPosition().clone())){
+                            enPassentAvailable = true;
+                        }
+                    }
                     return;
                 }
             }

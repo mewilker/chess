@@ -41,7 +41,6 @@ public class Pawn extends ChessPiece{
     twoSpace(board, myPosition);
     oneSpace(board, myPosition);
     capture(board, myPosition);
-    enPassant(board,myPosition);
     return moves;
   }
 
@@ -172,44 +171,6 @@ public class Pawn extends ChessPiece{
         moves.add(new ChessMove(myPosition, endpos, null));
       }
     }
-  }
-
-  /**
-   * <p>Opponent double moves pawn</p>
-   * <p>It ends next to yours, skipping capture</p>
-   * <p>The immediate following turn, you can capture as if they had only moved one</p>*/
-  private void enPassant(ChessBoard board, ChessPosition myPos){
-    ChessPosition newLeft = myPos.clone();
-    ChessPosition newRight = myPos.clone();
-    newLeft.left(1);
-    newRight.right(1);
-    if (checkPass(newLeft, myPos, board)){
-      return;
-    }
-    checkPass(newRight, myPos, board);
-  }
-
-  private boolean checkPass(ChessPosition side, ChessPosition myPos, ChessBoard board){
-    if(board.onBoard(side)) {
-      ChessPiece opponent=board.getPiece(side);
-      if (opponent != null && opponent.getTeamColor() != getTeamColor() && opponent.pieceType == PieceType.PAWN) {
-        Pawn pawn=(Pawn) opponent;
-        if (pawn.getLastPosition()!= null){
-        if (pawn.getLastPosition().getRow() == 2 && pawn.getTeamColor() == TeamColor.WHITE
-                || pawn.getLastPosition().getRow() == 7 && pawn.getTeamColor() == TeamColor.BLACK) {
-          ChessPosition endPos = pawn.getLastPosition().clone();
-          if (pawn.getLastPosition().getRow() == 2) {
-            endPos.up(1);
-          } else {
-            endPos.down(1);
-          }
-          moves.add(new ChessMove(myPos, endPos, null));
-          return true;
-        }
-        }
-      }
-    }
-    return false;
   }
 
   /**

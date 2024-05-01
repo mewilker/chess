@@ -193,7 +193,7 @@ public class ChessBoard {
             }
             else if (piece.getPieceType()==PieceType.PAWN){
                 Pawn pawn = (Pawn) piece;
-                pawn.move(move.getStartPosition());
+                pawn.updatePosition(move.getStartPosition());
                 //check if move is enPassent
                 if (captive == null){
                     if (move.getStartPosition().getColumn() != move.getEndPosition().getColumn()){
@@ -217,7 +217,7 @@ public class ChessBoard {
             }
             else if (piece.getPieceType()==PieceType.PAWN){
                 Pawn pawn = (Pawn) piece;
-                pawn.move(move.getStartPosition());
+                pawn.updatePosition(move.getStartPosition());
                 if (captive == null){
                     if (move.getStartPosition().getColumn() != move.getEndPosition().getColumn()){
                         ChessPosition captiveLocation = move.getEndPosition().clone();
