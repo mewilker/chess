@@ -65,8 +65,33 @@ public class ChessGame {
                     toadd = checkPass((Pawn) piece, newRight, startPosition, playBoard);
                 }
                 if (toadd != null){
-                    validmoves.add(toadd);
+                    possmoves.add(toadd);
                 }
+        }
+        if (piece.getPieceType() == ChessPiece.PieceType.KING && !isInCheck(piece.getTeamColor())){
+            King king = (King) piece;
+            if (!king.hasMoved(playBoard, startPosition)){
+                if (king.getTeamColor()==TeamColor.WHITE){
+                    ChessMove toadd = checkRookCastle(new ChessPosition(1,1));
+                    if (toadd != null){
+                        possmoves.add(toadd);
+                    }
+                    toadd = checkRookCastle(new ChessPosition(1,8));
+                    if (toadd != null){
+                        possmoves.add(toadd);
+                    }
+                }
+                else{
+                    ChessMove toadd = checkRookCastle(new ChessPosition(8,1));
+                    if (toadd != null){
+                        possmoves.add(toadd);
+                    }
+                    toadd = checkRookCastle(new ChessPosition(8,8));
+                    if (toadd != null){
+                        possmoves.add(toadd);
+                    }
+                }
+            }
         }
         for (ChessMove move : possmoves){
             ChessBoard board = playBoard.clone();
@@ -109,6 +134,56 @@ public class ChessGame {
         return null;
     }
 
+    private ChessMove checkRookCastle(ChessPosition position){
+        if (playBoard.getPiece(position)!= null && playBoard.getPiece(position).getPieceType() == ChessPiece.PieceType.ROOK){
+            Rook rook = (Rook) playBoard.getPiece(position);
+        //verify that rook has not moved
+            if(!rook.hasMoved(playBoard, position)){
+                //see if rook has a possible move right next to king
+                ChessPosition kingPos = playBoard.kingPos(rook.getTeamColor());
+                for (ChessMove move : rook.pieceMoves(playBoard.clone(),position.clone())){
+                    ChessPosition compareToKing = move.getEndPosition();
+                    ChessBoard copyBoard = playBoard.clone();
+                    if (compareToKing.getColumn()==kingPos.getColumn()+1 && playBoard.getPiece(compareToKing)==null){
+                        //simulate move and ensure rook is not in danger
+                        //king will get caught later
+                        ChessPosition endPos = new ChessPosition(kingPos.getRow(), kingPos.getColumn()+1);
+                        try{
+                            playBoard.movePiece(new ChessMove(position, endPos, null));
+                            if (!isInDanger(endPos)){
+                                ChessPosition kingJump = kingPos.clone();
+                                kingJump.right(2);
+                                return new ChessMove(kingPos, kingJump, null);
+                            }
+                        } catch (InvalidMoveException e){
+                            return null;
+                        }
+                        finally {
+                            setBoard(copyBoard);
+                        }
+                    }
+                    if (compareToKing.getColumn() == kingPos.getColumn()-1 && playBoard.getPiece(compareToKing)==null){
+                        ChessPosition endPos = new ChessPosition(kingPos.getRow(), kingPos.getColumn()-1);
+                        try{
+                            playBoard.movePiece(new ChessMove(position, endPos, null));
+                            if (!isInDanger(endPos)){
+                                ChessPosition kingJump = kingPos.clone();
+                                kingJump.left(2);
+                                return new ChessMove(kingPos, kingJump, null);
+                            }
+                        } catch (InvalidMoveException e){
+                            return null;
+                        }
+                        finally {
+                            setBoard(copyBoard);
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Makes a move in a chess game
      *
@@ -124,6 +199,10 @@ public class ChessGame {
             if (playBoard.getPiece(start).getPieceType()== ChessPiece.PieceType.PAWN){
                 Pawn pawn = (Pawn) playBoard.getPiece(start);
                 trackmove = pawn.hasMoved(playBoard, start);
+            }
+            if (playBoard.getPiece(start).getPieceType() == ChessPiece.PieceType.ROOK){
+                Rook rook = (Rook) playBoard.getPiece(start);
+                rook.move();
             }
             for (ChessMove moveitr : moves){
                 if (moveitr.equals(move)){
@@ -156,14 +235,22 @@ public class ChessGame {
         if (playBoard.kingPos(teamColor) == null){
             return false;
         }
-        TeamColor opponent = opponentColor(teamColor);
+        return isInDanger(playBoard.kingPos(teamColor));
+    }
+
+    public boolean isInDanger(ChessPosition piecePosition){
+        ChessPiece inDanger = playBoard.getPiece(piecePosition);
+        if (inDanger == null){
+            return false;
+        }
+        TeamColor opponent = opponentColor(inDanger.getTeamColor());
         Collection<ChessMove> moves = new HashSet<>();
         Collection<ChessPosition> places = playBoard.piecesOnBoard(opponent);
         for (ChessPosition place : places){
             ChessPiece piece = playBoard.getPiece(place);
             moves= piece.pieceMoves(playBoard, place.clone());
             for (ChessMove move : moves){
-                if(move.getEndPosition().equals(playBoard.kingPos(teamColor))){
+                if(move.getEndPosition().equals(piecePosition)){
                     return true;
                 }
             }

@@ -190,6 +190,15 @@ public class ChessBoard {
             white.add(move.getEndPosition());
             if(piece.getPieceType()==PieceType.KING){
                 whiteKing = move.getEndPosition();
+                ChessPosition rookEnd = whiteKing.clone();
+                if (move.getStartPosition().getColumn()-move.getEndPosition().getColumn()==2){
+                    rookEnd.right(1);
+                    movePiece(new ChessMove(new ChessPosition(1,1), rookEnd, null));
+                }
+                else if (move.getStartPosition().getColumn()-move.getEndPosition().getColumn()==-2){
+                    rookEnd.left(1);
+                    movePiece(new ChessMove(new ChessPosition(1,8), rookEnd, null));
+                }
             }
             else if (piece.getPieceType()==PieceType.PAWN){
                 Pawn pawn = (Pawn) piece;
@@ -214,6 +223,15 @@ public class ChessBoard {
             black.add(move.getEndPosition());
             if(piece.getPieceType()==PieceType.KING){
                 blackKing = move.getEndPosition();
+                ChessPosition rookEnd = blackKing.clone();
+                if (move.getStartPosition().getColumn()-move.getEndPosition().getColumn()==2){
+                    rookEnd.right(1);
+                    movePiece(new ChessMove(new ChessPosition(8,1), rookEnd, null));
+                }
+                else if (move.getStartPosition().getColumn()-move.getEndPosition().getColumn()==-2){
+                    rookEnd.left(1);
+                    movePiece(new ChessMove(new ChessPosition(8,8), rookEnd, null));
+                }
             }
             else if (piece.getPieceType()==PieceType.PAWN){
                 Pawn pawn = (Pawn) piece;

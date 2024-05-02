@@ -53,9 +53,6 @@ public class Rook extends ChessPiece{
    * @return true if this has moved
    */
   public boolean hasMoved(ChessBoard board, ChessPosition myPosition){
-    if (hasMoved){
-      return hasMoved;
-    }
     if (this.teamColor== TeamColor.WHITE){
       if (myPosition.getRow() !=1){
         hasMoved = true;
@@ -67,6 +64,10 @@ public class Rook extends ChessPiece{
       }
     }
     return hasMoved;
+  }
+
+  public void move(){
+    hasMoved = true;
   }
 
   @Override

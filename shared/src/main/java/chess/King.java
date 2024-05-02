@@ -77,16 +77,13 @@ public class King extends ChessPiece{
    * @return true if this has moved
    */
   public boolean hasMoved(ChessBoard board, ChessPosition myPosition){
-    if (hasMoved){
-      return hasMoved;
-    }
     if (this.teamColor== TeamColor.WHITE){
-      if (myPosition.getRow() !=1){
+      if (myPosition.getRow() !=1 || myPosition.getColumn() != 5){
         hasMoved = true;
       }
     }
     else{
-      if (myPosition.getRow() != 8){
+      if (myPosition.getRow() != 8 || myPosition.getColumn() != 5){
         hasMoved = true;
       }
     }
