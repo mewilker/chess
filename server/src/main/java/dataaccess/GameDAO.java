@@ -26,7 +26,7 @@ public class GameDAO {
     public Collection<UserGame> getGames() throws DataAccessException{
         HashSet<UserGame> result = new HashSet<>();
         Connection conn = db.getConnection();
-        String sql = "SELECT * FROM chess.games";
+        String sql = "SELECT * FROM games";
         try {
             ResultSet set = conn.prepareStatement(sql).executeQuery();
             while(set.next()){
@@ -88,7 +88,7 @@ public class GameDAO {
         int result = 0;
         try{
             find(userGame.getGameName());
-            String sql = "SELECT * FROM chess.games WHERE name = ?";   
+            String sql = "SELECT * FROM games WHERE name = ?";
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setString(1, userGame.getGameName());
             set = statement.executeQuery();
@@ -97,7 +97,7 @@ public class GameDAO {
                 duplicates++;
             }
             add(userGame, conn);
-            sql = "SELECT id FROM chess.games WHERE name = ?";
+            sql = "SELECT id FROM games WHERE name = ?";
             statement = conn.prepareStatement(sql);
             statement.setString(1, userGame.getGameName());
             set = statement.executeQuery();
@@ -117,7 +117,7 @@ public class GameDAO {
             if (e.getMessage().equals("not found")){
                 try{
                     add(userGame, conn);
-                    String sql = "SELECT id FROM chess.games WHERE name = ?";
+                    String sql = "SELECT id FROM games WHERE name = ?";
                     PreparedStatement statement = conn.prepareStatement(sql);
                     statement.setString(1, userGame.getGameName());
                     set = statement.executeQuery();
@@ -154,7 +154,7 @@ public class GameDAO {
      */
     public UserGame find(int gameID) throws DataAccessException{
         Connection conn = db.getConnection();
-        String sql = "SELECT * FROM chess.games WHERE id = ?";   
+        String sql = "SELECT * FROM games WHERE id = ?";
         UserGame game;
         try{
             PreparedStatement statement = conn.prepareStatement(sql);
@@ -189,7 +189,7 @@ public class GameDAO {
      */
     public UserGame find (String gameName) throws DataAccessException{
         Connection conn = db.getConnection();
-        String sql = "SELECT * FROM chess.games WHERE name = ?";   
+        String sql = "SELECT * FROM games WHERE name = ?";
         UserGame game;
         try{
             PreparedStatement statement = conn.prepareStatement(sql);
@@ -218,7 +218,7 @@ public class GameDAO {
     public void updateGame(UserGame game) throws DataAccessException{
         Connection conn = db.getConnection();
         Gson gson = new Gson();
-        String sql = "UPDATE chess.games SET whiteUsername = ?, blackUsername = ?, "
+        String sql = "UPDATE games SET whiteUsername = ?, blackUsername = ?, "
             +"gameobj = ? WHERE id = ?";
         try{
             conn.setAutoCommit(false);
@@ -261,7 +261,7 @@ public class GameDAO {
         Gson gson = new Gson();
         try{
             conn.setAutoCommit(false);
-            String sql = "INSERT INTO chess.games (name, gameobj) VALUES (?,?)";
+            String sql = "INSERT INTO games (name, gameobj) VALUES (?,?)";
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setString(1, game.getGameName());
             statement.setString(2, gson.toJson(game.getGame()));

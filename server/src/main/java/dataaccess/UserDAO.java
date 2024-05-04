@@ -23,7 +23,7 @@ public class UserDAO {
     public Collection<User> getUsers() throws DataAccessException{
         Collection<User> result = new HashSet<>();
         Connection conn = db.getConnection();
-        String sql = "SELECT * FROM chess.users";
+        String sql = "SELECT * FROM users";
         try{
             ResultSet set = conn.prepareStatement(sql).executeQuery();
             while(set.next()){
@@ -74,7 +74,7 @@ public class UserDAO {
             if (e.getMessage() == "not found"){
                 try{
                     conn.setAutoCommit(false);
-                    String sql = "INSERT INTO chess.users (username, password, email) VALUES (?,?,?)";
+                    String sql = "INSERT INTO users (username, password, email) VALUES (?,?,?)";
                     PreparedStatement statement = conn.prepareStatement(sql);
                     statement.setString(1, user.getUserName());
                     statement.setString(2, user.getPassword());
@@ -103,7 +103,7 @@ public class UserDAO {
      */
     public User find(String username) throws DataAccessException{
         Connection conn = db.getConnection();
-        String sql = "SELECT * FROM chess.users WHERE username = ?";
+        String sql = "SELECT * FROM users WHERE username = ?";
         User user;
         try{
             PreparedStatement statement = conn.prepareStatement(sql);

@@ -22,7 +22,7 @@ public class AuthDAO {
     public Collection<AuthToken> getTokens() throws DataAccessException{
         Collection<AuthToken> result = new HashSet<>();
         Connection conn = db.getConnection();
-        String sql = "SELECT * FROM chess.authtokens";
+        String sql = "SELECT * FROM authtokens";
         try{
             ResultSet set = conn.prepareStatement(sql).executeQuery();
             while(set.next()){
@@ -78,7 +78,7 @@ public class AuthDAO {
             if (e.getMessage().equals("not found")){
                 try{
                     conn.setAutoCommit(false);
-                    String sql = "INSERT INTO chess.authtokens (username, token) VALUES (?,?)";
+                    String sql = "INSERT INTO authtokens (username, token) VALUES (?,?)";
                     PreparedStatement statement = conn.prepareStatement(sql);
                     statement.setString(1, authToken.getUserName());
                     statement.setString(2, authToken.getAuthToken());
@@ -107,7 +107,7 @@ public class AuthDAO {
      */
     public AuthToken findName(String userName) throws DataAccessException{
         Connection conn = db.getConnection();
-        String sql = "SELECT token FROM chess.authtokens WHERE username = ?";
+        String sql = "SELECT token FROM authtokens WHERE username = ?";
         AuthToken auth;
         try{
             PreparedStatement statement = conn.prepareStatement(sql);
@@ -136,7 +136,7 @@ public class AuthDAO {
      */
     public AuthToken findToken(String authToken) throws DataAccessException{
         Connection conn = db.getConnection();
-        String sql = "SELECT username FROM chess.authtokens WHERE token = ?";
+        String sql = "SELECT username FROM authtokens WHERE token = ?";
         AuthToken auth;
         try{
             PreparedStatement statement = conn.prepareStatement(sql);

@@ -61,7 +61,7 @@ public class DatabaseManager {
                 prepStatement.executeUpdate();
             }
             statement ="""
-                    CREATE TABLE IF NOT EXISTS authTokens(
+                    CREATE TABLE IF NOT EXISTS authtokens(
                     	username VARCHAR (255) NOT NULL,
                         token VARCHAR(255) NOT NULL,
                         PRIMARY KEY (token),
