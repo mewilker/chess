@@ -8,6 +8,8 @@ import model.User;
 import request.LoginRequest;
 import result.LoginResult;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 /**logs in a user */
 public class LoginService {
     
@@ -32,7 +34,7 @@ public class LoginService {
             udao = new UserDAO();
             adao = new AuthDAO();
             User user = udao.find(request.getUsername());
-            if (user.authenticate(request.getPassword())){
+            if (BCrypt.checkpw(request.getPassword(), user.getPassword())){
                 //return username and authtoken response
                 result.setAuthToken(adao.genAuthToken(user.getUserName()));
                 result.setUsername(user.getUserName());

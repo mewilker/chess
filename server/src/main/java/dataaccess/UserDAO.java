@@ -62,7 +62,7 @@ public class UserDAO {
         Connection conn = db.getConnection();
         try{
             find(user.getUserName());
-            
+
         }
         catch (DataAccessException e){
             if (e.getMessage() == "not found"){

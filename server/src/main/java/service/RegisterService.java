@@ -8,6 +8,8 @@ import dataaccess.DataAccessException;
 import request.RegisterRequest;
 import result.RegisterResult;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 /**registers a new user */
 public class RegisterService {
     
@@ -36,7 +38,10 @@ public class RegisterService {
         try{
             adao = new AuthDAO();
             udao = new UserDAO();
-            User user = new User(request.getUsername(),request.getPassword(),request.getEmail());
+
+            String hashedPass = BCrypt.hashpw(request.getPassword(),BCrypt.gensalt());
+
+            User user = new User(request.getUsername(),hashedPass,request.getEmail());
             udao.insert(user);
             result.setAuthToken(adao.genAuthToken(user.getUserName()));
             result.setUsername(user.getUserName());
