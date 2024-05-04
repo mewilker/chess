@@ -70,7 +70,7 @@ public class ChessGame {
         }
         if (piece.getPieceType() == ChessPiece.PieceType.KING && !isInCheck(piece.getTeamColor())){
             King king = (King) piece;
-            if (!king.hasMoved(playBoard, startPosition)){
+            if (!king.hasMoved(startPosition)){
                 if (king.getTeamColor()==TeamColor.WHITE){
                     ChessMove toadd = checkRookCastle(new ChessPosition(1,1));
                     if (toadd != null){

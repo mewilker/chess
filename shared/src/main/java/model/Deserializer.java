@@ -53,6 +53,7 @@ public class Deserializer implements JsonDeserializer{
                 PieceType pieceType = null;
                 HashSet<ChessMove> moves = null;
                 boolean hasMoved = false;
+                ChessPosition lasPos = null;
 
                 in.beginObject();
 
@@ -78,14 +79,14 @@ public class Deserializer implements JsonDeserializer{
                             }
                             break;
                         case "moves":
-                            GsonBuilder builder = new GsonBuilder();
-                            builder.registerTypeAdapter(ChessMove.class, new Deserializer());
-                            builder.registerTypeAdapter(ChessPosition.class, new Deserializer());
-                            moves = builder.create().fromJson(in, new TypeToken<HashSet<ChessMove>>(){}.getType());
+                            moves = new Gson().fromJson(in, new TypeToken<HashSet<ChessMove>>(){}.getType());
                             break;
                         case "hasMoved":
                             hasMoved = in.nextBoolean();
                             break;
+                        case "lastPos":
+                            lasPos = new Gson().fromJson(in, ChessPosition.class);
+
                     }
                 }
 
@@ -99,9 +100,9 @@ public class Deserializer implements JsonDeserializer{
                     case KING:
                         King king = new King(teamColor);
                         if(hasMoved){
-                            //TODO castling thing not impled
+                            king.setMoveTrue();
                         }
-                        result = (ChessPiece) king;
+                        result = king;
                         break;
                     case QUEEN:
                         result = new Queen(teamColor);
@@ -109,9 +110,9 @@ public class Deserializer implements JsonDeserializer{
                     case ROOK:
                         Rook rook = new Rook(teamColor);
                         if(hasMoved){
-                            //TODO castling thing not impled
+                            rook.move();
                         }
-                        result = (ChessPiece) rook;
+                        result = rook;
                         break;
                     case BISHOP:
                         result = new Bishop(teamColor);
@@ -122,9 +123,9 @@ public class Deserializer implements JsonDeserializer{
                     case PAWN:
                         Pawn pawn = new Pawn(teamColor);
                         if (hasMoved){
-                            //pawn.move(5,5);
+                            pawn.move(lasPos);
                         }
-                        result = (ChessPiece) pawn;
+                        result = pawn;
                         break;
                 }
                 return result;
