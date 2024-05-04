@@ -40,12 +40,6 @@ public class GameDAO {
         }
         db.closeConnection(conn);
         return result;
-        //legacy static Collection
-        /*Collection<UserGame> copy = new HashSet<>();
-        for(UserGame game : games){
-            copy.add(game);
-        }        
-        return copy;*/
     }
 
     /**Removes all games from the database */
@@ -171,13 +165,7 @@ public class GameDAO {
             throw new DataAccessException(e.getMessage());
         }
         db.closeConnection(conn);
-        return game;    
-        /*for (UserGame game : games){
-            if (gameID == game.getGameID()){
-                return game;
-            }
-        }
-        throw new DataAccessException("not found");*/
+        return game;
     }
 
     /**
@@ -207,12 +195,6 @@ public class GameDAO {
         }
         db.closeConnection(conn);
         return game;
-        /*for (UserGame game : games){
-            if (gameName.equals(game.getGameName())){
-                return game;
-            }
-        }
-        throw new DataAccessException("not found");*/
     }
 
     public void updateGame(UserGame game) throws DataAccessException{

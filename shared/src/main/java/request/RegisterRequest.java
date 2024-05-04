@@ -33,11 +33,7 @@ public class RegisterRequest {
      * @return true if request is valid
      */
     public boolean valid(){
-        //TODO add empty string cases
         //TODO check email validity
-        if(username==null || password==null || email==null){
-            return false;
-        }
-        return true;
+        return username != null && password != null && email != null && !username.isEmpty() && !email.isEmpty() && !password.isEmpty();
     }
 }

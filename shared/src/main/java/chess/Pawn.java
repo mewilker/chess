@@ -148,28 +148,15 @@ public class Pawn extends ChessPiece{
    * @param endpos
    */
   private void checkPromote(ChessBoard board, ChessPosition myPosition, ChessPosition endpos){
-    if (this.teamColor == TeamColor.WHITE){
-      if (endpos.getRow()==8){
-        moves.add(new ChessMove(myPosition, endpos, PieceType.BISHOP));
-        moves.add(new ChessMove(myPosition, endpos, PieceType.QUEEN));
-        moves.add(new ChessMove(myPosition, endpos, PieceType.ROOK));
-        moves.add(new ChessMove(myPosition, endpos, PieceType.KNIGHT));
-      }
-      else{
-        moves.add(new ChessMove(myPosition, endpos, null));
-      }
-      return;
+    if (this.teamColor == TeamColor.WHITE && endpos.getRow() == 8
+            || this.teamColor == TeamColor.BLACK && endpos.getRow() == 1){
+      moves.add(new ChessMove(myPosition, endpos, PieceType.BISHOP));
+      moves.add(new ChessMove(myPosition, endpos, PieceType.QUEEN));
+      moves.add(new ChessMove(myPosition, endpos, PieceType.ROOK));
+      moves.add(new ChessMove(myPosition, endpos, PieceType.KNIGHT));
     }
-    else{ // TeamColor.BLACK
-      if (endpos.getRow()==1){
-        moves.add(new ChessMove(myPosition, endpos, PieceType.BISHOP));
-        moves.add(new ChessMove(myPosition, endpos, PieceType.QUEEN));
-        moves.add(new ChessMove(myPosition, endpos, PieceType.ROOK));
-        moves.add(new ChessMove(myPosition, endpos, PieceType.KNIGHT));
-      }
-      else {
-        moves.add(new ChessMove(myPosition, endpos, null));
-      }
+    else{
+      moves.add(new ChessMove(myPosition, endpos, null));
     }
   }
 

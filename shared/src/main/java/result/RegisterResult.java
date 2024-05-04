@@ -11,10 +11,10 @@ public class RegisterResult extends LoginResult{
      * username and Authentication Token constructor
      * 
      * @param name username
-     * @param Token authToken
+     * @param token authToken
      */
-    public RegisterResult(String name, String Token){
-        super(name, Token);
+    public RegisterResult(String name, String token){
+        super(name, token);
     }
 
 }

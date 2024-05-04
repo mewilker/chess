@@ -36,12 +36,6 @@ public class UserDAO {
             throw new DataAccessException(e.getMessage());
         }
         return result;
-        //legacy static set
-        /*Collection<User> copy = new HashSet<>();
-        for(User user :users){
-            copy.add(user);
-        }
-        return copy;*/
     }
     
     /**Removes all users from the database */
@@ -125,15 +119,6 @@ public class UserDAO {
         }
         db.closeConnection(conn);
         return user;
-        //legacy static set code
-        /*for (User user : users){
-            if (username.equals(user.getUserName())){
-                //System.out.println("found");
-                return user;
-            }
-        }
-        throw new DataAccessException("not found");*/
     }
-
 
 }

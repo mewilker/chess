@@ -61,8 +61,8 @@ public class UserGame {
         this.game = game;
     }
 
-    public void changeID(int ID){
-        gameID = ID;
+    public void changeID(int id){
+        gameID = id;
     }
 
     public void makeMove(ChessMove move, TeamColor color) throws InvalidMoveException{

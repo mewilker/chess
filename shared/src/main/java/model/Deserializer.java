@@ -60,14 +60,15 @@ public class Deserializer implements JsonDeserializer{
                 while(in.hasNext()){
                     String name = in.nextName();
                     switch (name) {
-                        case "teamColor":
+                        case "teamColor" -> {
                             String team = in.nextString();
                             switch (team) {
                                 case "BLACK" -> teamColor = TeamColor.BLACK;
                                 case "WHITE" -> teamColor = TeamColor.WHITE;
                             }
-                            break;
-                        case "pieceType":
+                        }
+                        case "pieceType" -> {
+
                             String type = in.nextString();
                             switch (type) {
                                 case "KING" -> pieceType = PieceType.KING;
@@ -77,16 +78,10 @@ public class Deserializer implements JsonDeserializer{
                                 case "BISHOP" -> pieceType = PieceType.BISHOP;
                                 case "KNIGHT" -> pieceType = PieceType.KNIGHT;
                             }
-                            break;
-                        case "moves":
-                            moves = new Gson().fromJson(in, new TypeToken<HashSet<ChessMove>>(){}.getType());
-                            break;
-                        case "hasMoved":
-                            hasMoved = in.nextBoolean();
-                            break;
-                        case "lastPos":
-                            lasPos = new Gson().fromJson(in, ChessPosition.class);
-
+                        }
+                        case "moves" -> moves = new Gson().fromJson(in, new TypeToken<HashSet<ChessMove>>(){}.getType());
+                        case "hasMoved" -> hasMoved = in.nextBoolean();
+                        case "lastPos" -> lasPos = new Gson().fromJson(in, ChessPosition.class);
                     }
                 }
 

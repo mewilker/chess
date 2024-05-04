@@ -45,7 +45,6 @@ public class JoinGameRequest {
      * @return true if request is valid
      */
     public boolean valid(){
-        //TODO validity lodgic
         if(gameID == 0){
             return false;
         }

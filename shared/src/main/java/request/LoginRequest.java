@@ -27,11 +27,6 @@ public class LoginRequest {
      * @return true if all fields have something
      */
     public boolean valid(){
-        //TODO empty string cases
-        if (username == null || password == null){
-            return false;
-        }
-
-        return true;
+        return username != null && password != null && !username.isEmpty() && !password.isEmpty();
     }
 }
