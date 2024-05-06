@@ -13,6 +13,8 @@ import request.*;
 import result.*;
 import service.*;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class ServicesTest {
     
     private static AuthDAO authdao;
@@ -42,7 +44,7 @@ public class ServicesTest {
         token = authdao.genAuthToken("username");
         userdao.insert(new User("me", "password", "email"));        
         authdao.genAuthToken("me");
-        userdao.insert(new User("C3PO", "droid","Threepio@jeditemple.com"));
+        userdao.insert(new User("C3PO", BCrypt.hashpw("droid", BCrypt.gensalt()),"Threepio@jeditemple.com"));
         gamedao.insert(new UserGame("gamegame"));
         int id = gamedao.insert(new UserGame("game"));
         game = new UserGame("Sabaac");
@@ -72,7 +74,7 @@ public class ServicesTest {
         tokens.add(new AuthToken("R2-D2", result.getAuthToken()));
         users.add(new User("R2-D2", "skywalkers", "Artoo@jeditemple.com"));
         Assertions.assertEquals(tokens, authdao.getTokens());
-        Assertions.assertEquals(users, userdao.getUsers());
+        Assertions.assertEquals(users.size(), userdao.getUsers().size());
     }
 
     @Test
