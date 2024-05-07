@@ -17,7 +17,7 @@ public class Server {
     }
 
     private void createRoutes(){
-        //Spark.webSocket("/connect", WebSocketServer.class);
+        Spark.webSocket("/connect", WebSocketServer.class);
 
         //Clear App
         Spark.delete("/db",(req,res) -> new ClearHandler().cleardb(req,res));
