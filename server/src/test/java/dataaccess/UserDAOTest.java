@@ -82,34 +82,34 @@ public class UserDAOTest {
     @Test
     @DisplayName("Positive Insert User")
     public void pInsert() throws DataAccessException, SQLException{
-        User R2 = new User("R2-D2","skywalkers","Artoo@jeditemple.com");
-        udao.insert(R2);
+        User artoo = new User("R2-D2","skywalkers","Artoo@jeditemple.com");
+        udao.insert(artoo);
         String sql = "SELECT * FROM users WHERE username = 'R2-D2'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertTrue(set.next());
-        Assertions.assertEquals(R2.getUserName(), set.getString("username"));
-        Assertions.assertEquals(R2.getPassword(), set.getString("password"));
-        Assertions.assertEquals(R2.getEmail(), set.getString("email"));
+        Assertions.assertEquals(artoo.getUserName(), set.getString("username"));
+        Assertions.assertEquals(artoo.getPassword(), set.getString("password"));
+        Assertions.assertEquals(artoo.getEmail(), set.getString("email"));
     }
 
     @Test
     @DisplayName("Negative Insert User")
     public void nInsert(){
-        User Threepio = new User("C3PO", "password", "email");
-        Assertions.assertThrows(DataAccessException.class, ()->udao.insert(Threepio),
+        User threepio = new User("C3PO", "password", "email");
+        Assertions.assertThrows(DataAccessException.class, ()->udao.insert(threepio),
          "already taken");
     }
 
     @Test
     @DisplayName("Positive Find Test")
     public void pFind() throws DataAccessException, SQLException{
-        User Threepio = udao.find("C3PO");
+        User threepio = udao.find("C3PO");
         String sql = "SELECT * FROM users WHERE username = 'C3PO'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertTrue(set.next());
-        Assertions.assertEquals(Threepio.getUserName(), set.getString("username"));
-        Assertions.assertEquals(Threepio.getPassword(), set.getString("password"));
-        Assertions.assertEquals(Threepio.getEmail(), set.getString("email"));
+        Assertions.assertEquals(threepio.getUserName(), set.getString("username"));
+        Assertions.assertEquals(threepio.getPassword(), set.getString("password"));
+        Assertions.assertEquals(threepio.getEmail(), set.getString("email"));
     }
 
     @Test

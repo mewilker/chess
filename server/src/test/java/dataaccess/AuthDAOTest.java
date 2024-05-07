@@ -97,12 +97,12 @@ public class AuthDAOTest {
     @Test
     @DisplayName("Positive FindName")
     public void pFindName() throws DataAccessException, SQLException{
-        AuthToken Threepio = adao.findName("C3PO");
+        AuthToken threepio = adao.findName("C3PO");
         String sql = "SELECT * FROM authtokens WHERE username = 'C3PO'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertTrue(set.next());
-        Assertions.assertEquals(Threepio.getUserName(), set.getString("username"));
-        Assertions.assertEquals(Threepio.getAuthToken(), set.getString("token"));
+        Assertions.assertEquals(threepio.getUserName(), set.getString("username"));
+        Assertions.assertEquals(threepio.getAuthToken(), set.getString("token"));
     }
 
     @Test
@@ -115,12 +115,12 @@ public class AuthDAOTest {
     @Test
     @DisplayName("Positive FindToken")
     public void pFindToken() throws DataAccessException, SQLException{
-        AuthToken Threepio = adao.findToken("abe");
+        AuthToken threepio = adao.findToken("abe");
         String sql = "SELECT * FROM authtokens WHERE token = 'abe'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertTrue(set.next());
-        Assertions.assertEquals(Threepio.getUserName(), set.getString("username"));
-        Assertions.assertEquals(Threepio.getAuthToken(), set.getString("token"));
+        Assertions.assertEquals(threepio.getUserName(), set.getString("username"));
+        Assertions.assertEquals(threepio.getAuthToken(), set.getString("token"));
     }
 
     @Test
