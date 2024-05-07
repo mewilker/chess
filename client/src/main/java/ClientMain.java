@@ -1,11 +1,11 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import webSocketMessages.serverMessages.*;
-import webSocketMessages.userCommands.*;
+import websocket.messages.*;
+import websocket.commands.*;
 import model.AuthToken;
 import model.UserGame;
 import model.Deserializer;
-import serverFacade.*;
+import serverfacade.*;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -27,8 +27,8 @@ public class ClientMain {
     private static PrintStream out = new PrintStream(System.out,true, StandardCharsets.UTF_8);
     private static Format format = new Format(out);
     private static String serverURL = "localhost:8080";
-    private static final String http = "http://";
-    private static final String ws = "ws://";
+    private static final String HTTP= "http://";
+    private static final String WS= "ws://";
     private static final String URI_ERROR_MSG = "Could not connect to URL. Please restart the program and try again.\n";
     
 
@@ -49,7 +49,7 @@ public class ClientMain {
                 String password = format.entryfield("Password");
                 out.print(ERASE_SCREEN);
                 try{
-                    ServerFacade login = new ServerFacade(http + serverURL);
+                    ServerFacade login = new ServerFacade(HTTP + serverURL);
                     AuthToken token = login.login(name, password);
                     if (token != null){
                         postlogin(token);
@@ -73,7 +73,7 @@ public class ClientMain {
                 String password = format.entryfield("Password");
                 out.print(ERASE_SCREEN);
                 try{
-                    ServerFacade register = new ServerFacade(http+serverURL);
+                    ServerFacade register = new ServerFacade(HTTP +serverURL);
                     AuthToken token = register.register(username, password, email);
                     if (token != null){
                         postlogin(token);
@@ -126,7 +126,7 @@ public class ClientMain {
             else if (input.equals("create")){
                 String name = format.entryfield("Game Name");
                 try{
-                    ServerFacade create = new ServerFacade(http+serverURL);
+                    ServerFacade create = new ServerFacade(HTTP +serverURL);
                     int id = create.createGame(name, token.getAuthToken());
                     out.print("Successfully created game " + name + ".\n");
                     out.print("ID number is " + String.valueOf(id)+ "\n");
@@ -140,7 +140,7 @@ public class ClientMain {
             }
             else if (input.equals("list")){
                 try{
-                    ServerFacade list = new ServerFacade(http+serverURL);
+                    ServerFacade list = new ServerFacade(HTTP +serverURL);
                     ArrayList<UserGame> games = (ArrayList<UserGame>) list.list(token.getAuthToken());
                     //table headers
                     out.print(SET_TEXT_COLOR_MAGENTA);
@@ -190,15 +190,15 @@ public class ClientMain {
                 }
             }
             else if (input.equals("join")){
-                String ID = format.entryfield("Game ID");
+                String idString = format.entryfield("Game ID");
                 int id = 0;
                 do{
                     try{
-                        id = Integer.parseInt(ID);
+                        id = Integer.parseInt(idString);
                     }
                     catch (NumberFormatException e){
-                        format.errormsg(ID + " is not a valid id. Please try again.\n");
-                        ID = format.getInput();
+                        format.errormsg(idString + " is not a valid id. Please try again.\n");
+                        idString = format.getInput();
                     }
                 }
                 while (id <= 0);
@@ -210,10 +210,10 @@ public class ClientMain {
                 }
 
                 try{
-                    ServerFacade join = new ServerFacade(http+serverURL);
+                    ServerFacade join = new ServerFacade(HTTP +serverURL);
                     join.join(token.getAuthToken(),id,team);
                     //WEBSOCKETS
-                    WSClient websocket = new WSClient(ws+serverURL, messageHandler());
+                    WSClient websocket = new WSClient(WS +serverURL, messageHandler());
                     JoinPlayerCommand joinSocket = new JoinPlayerCommand(token,team,id);
                     websocket.send(new Gson().toJson(joinSocket));
                     if (team.equals("BLACK")){
@@ -234,23 +234,23 @@ public class ClientMain {
 
             }
             else if (input.equals("observe")){
-                String ID = format.entryfield("GameID");
+                String idString = format.entryfield("GameID");
                 int id = 0;
                 do{
                     try{
-                        id = Integer.parseInt(ID);
+                        id = Integer.parseInt(idString);
                     }
                     catch (NumberFormatException e){
-                        format.errormsg(ID + " is not a valid id. Please try again.\n");
-                        ID = format.getInput();
+                        format.errormsg(idString + " is not a valid id. Please try again.\n");
+                        idString = format.getInput();
                     }
                 } while (id <= 0);
 
                 try{
-                    ServerFacade observe = new ServerFacade(http+serverURL);
+                    ServerFacade observe = new ServerFacade(HTTP +serverURL);
                     observe.join(token.getAuthToken(), id, "");
                     //WEBSOCKETS
-                    WSClient websocket = new WSClient(ws+serverURL, messageHandler());
+                    WSClient websocket = new WSClient(WS +serverURL, messageHandler());
                     ObserverCommand joinSocket = new ObserverCommand(id,token);
                     websocket.send(new Gson().toJson(joinSocket));
                     gameplayLoop(websocket, id, token);
@@ -270,7 +270,7 @@ public class ClientMain {
         //logout handler
         if (input.equals("logout")){
             try{
-                new ServerFacade(http+serverURL).logout(token.getAuthToken());
+                new ServerFacade(HTTP +serverURL).logout(token.getAuthToken());
             }
             catch (URISyntaxException e){
                 format.errormsg(URI_ERROR_MSG);

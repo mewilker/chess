@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import model.AuthToken;
 import model.UserGame;
-import serverFacade.*;
+import serverfacade.*;
 
 
 public class ServerFacadeTests {

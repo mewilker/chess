@@ -1,4 +1,4 @@
-package serverFacade;
+package serverfacade;
 
 import javax.websocket.*;
 import java.net.*;

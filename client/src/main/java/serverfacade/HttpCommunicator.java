@@ -1,11 +1,9 @@
-package serverFacade;
+package serverfacade;
 
 import java.io.*;
 import java.net.*;
 
-import chess.ChessMove;
 import chess.ChessPiece;
-import chess.ChessPosition;
 import com.google.gson.Gson;
 
 import com.google.gson.GsonBuilder;
