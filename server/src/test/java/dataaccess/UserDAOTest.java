@@ -55,7 +55,7 @@ public class UserDAOTest {
     @DisplayName("Positive Clear Test")
     public void clear()throws SQLException, DataAccessException{
         udao.clear();
-        String sql = "SELECT * FROM chess.users";
+        String sql = "SELECT * FROM users";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertFalse(set.next());
     }

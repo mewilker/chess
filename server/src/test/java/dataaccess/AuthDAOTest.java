@@ -27,7 +27,7 @@ public class AuthDAOTest {
     public void setup() throws DataAccessException, SQLException{
         udao.setup();
         conn = db.getConnection();
-        conn.prepareStatement("INSERT INTO chess.authtokens (username, token)"+
+        conn.prepareStatement("INSERT INTO authtokens (username, token)"+
             " VALUES ('username', 'abc'),('me', 'abd'),('C3PO', "+
             "'abe');").executeUpdate();
         
@@ -46,7 +46,7 @@ public class AuthDAOTest {
     @DisplayName("Positive Clear Test")
     public void clear() throws DataAccessException,SQLException{
         adao.clear();
-        String sql = "SELECT * FROM chess.authtokens";
+        String sql = "SELECT * FROM authtokens";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertFalse(set.next());
     }
@@ -74,7 +74,7 @@ public class AuthDAOTest {
     public void pInsert() throws DataAccessException, SQLException{
         udao.pInsert();
         adao.genAuthToken("R2-D2");
-        String sql = "SELECT * FROM chess.authtokens WHERE username = 'R2-D2'";
+        String sql = "SELECT * FROM authtokens WHERE username = 'R2-D2'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertTrue(set.next());
         Assertions.assertEquals("R2-D2", set.getString("username"));
@@ -85,7 +85,7 @@ public class AuthDAOTest {
     @DisplayName("Negative Insert Token") //I literally have no idea how to test this, my gen token will always insert a token...
     public void nInsert() throws DataAccessException,SQLException{
         adao.genAuthToken("C3PO");
-        String sql = "SELECT * FROM chess.authtokens WHERE username = 'C3PO'";
+        String sql = "SELECT * FROM authtokens WHERE username = 'C3PO'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertTrue(set.next());
         Assertions.assertEquals("C3PO", set.getString("username"));
@@ -98,7 +98,7 @@ public class AuthDAOTest {
     @DisplayName("Positive FindName")
     public void pFindName() throws DataAccessException, SQLException{
         AuthToken Threepio = adao.findName("C3PO");
-        String sql = "SELECT * FROM chess.authtokens WHERE username = 'C3PO'";
+        String sql = "SELECT * FROM authtokens WHERE username = 'C3PO'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertTrue(set.next());
         Assertions.assertEquals(Threepio.getUserName(), set.getString("username"));
@@ -116,7 +116,7 @@ public class AuthDAOTest {
     @DisplayName("Positive FindToken")
     public void pFindToken() throws DataAccessException, SQLException{
         AuthToken Threepio = adao.findToken("abe");
-        String sql = "SELECT * FROM chess.authtokens WHERE token = 'abe'";
+        String sql = "SELECT * FROM authtokens WHERE token = 'abe'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertTrue(set.next());
         Assertions.assertEquals(Threepio.getUserName(), set.getString("username"));
@@ -134,7 +134,7 @@ public class AuthDAOTest {
     @DisplayName("Positive Remove")
     public void pRemove() throws DataAccessException, SQLException{
         adao.remove("abc");
-        String sql = "SELECT * FROM chess.authtokens WHERE token = 'abc'";
+        String sql = "SELECT * FROM authtokens WHERE token = 'abc'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertFalse(set.next());
     }
