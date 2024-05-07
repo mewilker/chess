@@ -58,15 +58,6 @@ public class GameDAO {
     }
 
     /**
-     * returns the games in the database
-     * 
-     * @return Collection of games
-     */
-    public Collection<UserGame> listAll() throws DataAccessException{
-        return getGames();
-    }
-
-    /**
      * puts given Game in the database
      * 
      * @param userGame

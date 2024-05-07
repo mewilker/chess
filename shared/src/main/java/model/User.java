@@ -35,19 +35,6 @@ public class User {
         return email;
     }
 
-    /**
-     * authenticates password
-     * 
-     * @param passwd
-     * @return true if password is correct
-     */
-    public boolean authenticate(String passwd){
-        if (passwd.equals(password)){
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
