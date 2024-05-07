@@ -23,21 +23,22 @@ public class UserDAOTest {
 
     @BeforeAll
     public static void cleanMeOut() throws DataAccessException, SQLException{
-        udao = new UserDAO();
-        db = new DatabaseManager();
         Connection connect = db.getConnection();
-        String sql = "DELETE FROM chess.authtokens;";
+        String sql = "DELETE FROM authtokens;";
         connect.prepareStatement(sql).executeUpdate();
-        sql = "DELETE FROM chess.games";
+        sql = "DELETE FROM games";
         connect.prepareStatement(sql).executeUpdate();
         db.closeConnection(connect);
     }
-    
+
     @BeforeEach
-    public void setup() throws SQLException,DataAccessException{         
+    public void setup() throws SQLException,DataAccessException{
+        udao = new UserDAO();
+        db = new DatabaseManager();
+        new AuthDAO().clear();
         udao.clear();
         conn = db.getConnection();
-        conn.prepareStatement("INSERT INTO chess.users (username, password, email)"+
+        conn.prepareStatement("INSERT INTO users (username, password, email)"+
             " VALUES ('username', 'password', 'email'),('me', 'password','email'),('C3PO', "+
             "'droid','Threepio@jeditemple.com');").executeUpdate();
         
@@ -83,7 +84,7 @@ public class UserDAOTest {
     public void pInsert() throws DataAccessException, SQLException{
         User R2 = new User("R2-D2","skywalkers","Artoo@jeditemple.com");
         udao.insert(R2);
-        String sql = "SELECT * FROM chess.users WHERE username = 'R2-D2'";
+        String sql = "SELECT * FROM users WHERE username = 'R2-D2'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertTrue(set.next());
         Assertions.assertEquals(R2.getUserName(), set.getString("username"));
@@ -103,7 +104,7 @@ public class UserDAOTest {
     @DisplayName("Positive Find Test")
     public void pFind() throws DataAccessException, SQLException{
         User Threepio = udao.find("C3PO");
-        String sql = "SELECT * FROM chess.users WHERE username = 'C3PO'";
+        String sql = "SELECT * FROM users WHERE username = 'C3PO'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertTrue(set.next());
         Assertions.assertEquals(Threepio.getUserName(), set.getString("username"));

@@ -2,10 +2,7 @@ package dataaccess;
 
 import org.junit.jupiter.api.*;
 
-import dataaccess.DatabaseManager;
-import dataaccess.GameDAO;
 import model.UserGame;
-import dataaccess.DataAccessException;
 
 import java.sql.*;
 import java.util.Collection;
@@ -14,14 +11,15 @@ import java.util.HashSet;
 import  com.google.gson.Gson;
 
 public class GameDAOTest {
-    private GameDAO gdao;
+    private static GameDAO gdao;
     private UserDAOTest udao = new UserDAOTest();
-    private DatabaseManager db;
+    private static DatabaseManager db;
     private Connection conn;
 
     @BeforeAll
-    public static void init(){
+    public static void init() throws DataAccessException{
         gdao = new GameDAO();
+        db = new DatabaseManager();
 
     }
 
@@ -31,7 +29,7 @@ public class GameDAOTest {
         conn = db.getConnection();
         Gson gson = new Gson();
         String obj = gson.toJson(new UserGame(null).getGame());
-        conn.prepareStatement("INSERT INTO chess.games (name, gameobj)"
+        conn.prepareStatement("INSERT INTO games (name, gameobj)"
         +" VALUES ('game', '"+obj+"'),('gamegame','"+obj+"'),"
         +"('Sabaac','"+obj+"')").executeUpdate();
     }
@@ -39,6 +37,7 @@ public class GameDAOTest {
     @AfterEach
     public void clearDB()throws DataAccessException{
         gdao.clear();
+        new AuthDAO().clear();
         udao.clearDB();
         if (conn != null){
             db.closeConnection(conn);
@@ -49,7 +48,7 @@ public class GameDAOTest {
     @DisplayName("Positive Clear Test")
     public void clear() throws DataAccessException, SQLException{
         gdao.clear();
-        String sql = "SELECT * FROM chess.games";
+        String sql = "SELECT * FROM games";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertFalse(set.next());
     }
@@ -58,7 +57,7 @@ public class GameDAOTest {
     @DisplayName("Positive Get Games")
     public void pGet() throws DataAccessException, SQLException{
         HashSet<UserGame> games = new HashSet<>();
-        String sql = "SELECT name, id FROM chess.games";
+        String sql = "SELECT name, id FROM games";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         while (set.next()){
             UserGame addme = new UserGame(set.getString("name"));
@@ -80,7 +79,7 @@ public class GameDAOTest {
     @DisplayName("Positive Insert Game")
     public void pInsert() throws DataAccessException, SQLException{
         gdao.insert(new UserGame("Dejarik"));
-        String sql = "SELECT * FROM chess.games WHERE name = 'Dejarik'";
+        String sql = "SELECT * FROM games WHERE name = 'Dejarik'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertTrue(set.next());
         Assertions.assertEquals("Dejarik", set.getString("name"));        
@@ -112,7 +111,7 @@ public class GameDAOTest {
     @Test
     @DisplayName("Positive FindID")
     public void pFindID() throws DataAccessException, SQLException{
-        String sql = "SELECT id FROM chess.games WHERE name = 'game'";
+        String sql = "SELECT id FROM games WHERE name = 'game'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertTrue(set.next());
         UserGame game = gdao.find(set.getInt("id"));
@@ -131,13 +130,13 @@ public class GameDAOTest {
     @DisplayName("Positive Update")
     public void pUpdate() throws DataAccessException, SQLException{
         UserGame game = new UserGame("game");
-        String sql = "SELECT id FROM chess.games WHERE name = 'game'";
+        String sql = "SELECT id FROM games WHERE name = 'game'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertTrue(set.next());
         game.changeID(set.getInt("id"));
         game.setBlackUsername("username");
         gdao.updateGame(game);
-        sql = "SELECT * FROM chess.games WHERE id = ?";
+        sql = "SELECT * FROM games WHERE id = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, set.getInt("id"));
         set = stmt.executeQuery();
@@ -152,7 +151,7 @@ public class GameDAOTest {
     public void nUpdate() throws DataAccessException,SQLException{
         UserGame game = new UserGame("hello");
         gdao.updateGame(game);
-        String sql = "SELECT * FROM chess.games WHERE name = 'hello'";
+        String sql = "SELECT * FROM games WHERE name = 'hello'";
         ResultSet set = conn.prepareStatement(sql).executeQuery();
         Assertions.assertFalse(set.next());
     }

@@ -13,12 +13,12 @@ import java.util.HashSet;
 
 public class AuthDAOTest {
     private UserDAOTest udao = new UserDAOTest();
-    private AuthDAO adao;
-    private DatabaseManager db;
+    private static AuthDAO adao;
+    private static DatabaseManager db;
     private Connection conn;
 
     @BeforeAll
-    public void init() throws DataAccessException{
+    public static void init() throws DataAccessException{
         adao = new AuthDAO();
         db = new DatabaseManager();
     }
