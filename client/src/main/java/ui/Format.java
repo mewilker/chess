@@ -126,22 +126,26 @@ public class Format {
         for(int i = 1; i< 9; i++){
             out.print(String.valueOf(i));
             for (int j = 1; j < 9; j++){
-                if ((i%2==0 && j%2==0) || (i%2==1 && j%2==1)){
-                    out.print(SET_BG_COLOR_DARK_GREEN);
-                }
-                else{
-                    out.print(SET_BG_COLOR_LIGHT_GREY);
-                }
-                if (toggleLetters){
-                    out.print(" ");
-                }
-                ChessPiece piece = (ChessPiece) game.getPiece(new ChessPosition(i, j));
-                printPiece(piece);
+                printSquare(game, i, j);
             }
             out.print(SET_BG_COLOR_BLACK);
             out.print(String.valueOf(i) + "\n");
         }
         out.print(header);
+    }
+
+    private void printSquare(ChessBoard game, int i, int j) {
+        if ((i %2==0 && j %2==0) || (i %2==1 && j %2==1)){
+            out.print(SET_BG_COLOR_DARK_GREEN);
+        }
+        else{
+            out.print(SET_BG_COLOR_LIGHT_GREY);
+        }
+        if (toggleLetters){
+            out.print(" ");
+        }
+        ChessPiece piece = (ChessPiece) game.getPiece(new ChessPosition(i, j));
+        printPiece(piece);
     }
 
     public void printWhiteGame(ChessBoard game){
@@ -156,17 +160,7 @@ public class Format {
         for(int i = 8; i> 0; i--){
             out.print(String.valueOf(i));
             for (int j = 8; j>0; j--){
-                if ((i%2==0 && j%2==0) || (i%2==1 && j%2==1)){
-                    out.print(SET_BG_COLOR_DARK_GREEN);
-                }
-                else{
-                    out.print(SET_BG_COLOR_LIGHT_GREY);
-                }
-                if (toggleLetters){
-                    out.print(" ");
-                }
-                ChessPiece piece = (ChessPiece) game.getPiece(new ChessPosition(i, j));
-                printPiece(piece);
+                printSquare(game, i, j);
             }
             out.print(SET_BG_COLOR_BLACK);
             out.print(String.valueOf(i) + "\n");
@@ -186,36 +180,40 @@ public class Format {
         for(int i = 1; i< 9; i++){
             out.print(String.valueOf(i));
             for (int j = 1; j < 9; j++){
-                ChessPosition pos = new ChessPosition(i, j);
-                if(moves.contains(pos)){
-                    if ((i%2==0 && j%2==0) || (i%2==1 && j%2==1)){
-                        out.print(SET_BG_COLOR_DARK_BLUE);
-                    }
-                    else{
-                        out.print(SET_BG_COLOR_CYAN);
-                    }
-                }
-                else if (pos.equals(start)){
-                    out.print(SET_BG_COLOR_YELLOW);
-                }
-                else{
-                    if ((i%2==0 && j%2==0) || (i%2==1 && j%2==1)){
-                        out.print(SET_BG_COLOR_DARK_GREEN);
-                    }
-                    else{
-                        out.print(SET_BG_COLOR_LIGHT_GREY);
-                    }
-                }
-                if (toggleLetters){
-                    out.print(" ");
-                }
-                ChessPiece piece = (ChessPiece) game.getPiece(new ChessPosition(i, j));
-                printPiece(piece);
+                printMoveSquare(game, moves, start, i, j);
             }
             out.print(SET_BG_COLOR_BLACK);
             out.print(String.valueOf(i) + "\n");
         }
         out.print(header);
+    }
+
+    private void printMoveSquare(ChessBoard game, HashSet<ChessPosition> moves, ChessPosition start, int i, int j) {
+        ChessPosition pos = new ChessPosition(i, j);
+        if(moves.contains(pos)){
+            if ((i %2==0 && j %2==0) || (i %2==1 && j %2==1)){
+                out.print(SET_BG_COLOR_DARK_BLUE);
+            }
+            else{
+                out.print(SET_BG_COLOR_CYAN);
+            }
+        }
+        else if (pos.equals(start)){
+            out.print(SET_BG_COLOR_YELLOW);
+        }
+        else{
+            if ((i %2==0 && j %2==0) || (i %2==1 && j %2==1)){
+                out.print(SET_BG_COLOR_DARK_GREEN);
+            }
+            else{
+                out.print(SET_BG_COLOR_LIGHT_GREY);
+            }
+        }
+        if (toggleLetters){
+            out.print(" ");
+        }
+        ChessPiece piece = (ChessPiece) game.getPiece(new ChessPosition(i, j));
+        printPiece(piece);
     }
 
     public void printWhiteGame(ChessBoard game, HashSet<ChessPosition> moves, ChessPosition start){
@@ -230,31 +228,7 @@ public class Format {
         for(int i = 8; i> 0; i--){
             out.print(String.valueOf(i));
             for (int j = 8; j>0; j--){
-                ChessPosition pos = new ChessPosition(i, j);
-                if(moves.contains(pos)){
-                    if ((i%2==0 && j%2==0) || (i%2==1 && j%2==1)){
-                        out.print(SET_BG_COLOR_DARK_BLUE);
-                    }
-                    else{
-                        out.print(SET_BG_COLOR_CYAN);
-                    }
-                }
-                else if(pos.equals(start)){
-                    out.print(SET_BG_COLOR_YELLOW);
-                }
-                else{
-                    if ((i%2==0 && j%2==0) || (i%2==1 && j%2==1)){
-                        out.print(SET_BG_COLOR_DARK_GREEN);
-                    }
-                    else{
-                        out.print(SET_BG_COLOR_LIGHT_GREY);
-                    }
-                }
-                if (toggleLetters){
-                    out.print(" ");
-                }
-                ChessPiece piece = (ChessPiece) game.getPiece(new ChessPosition(i, j));
-                printPiece(piece);
+                printMoveSquare(game, moves, start, i, j);
             }
             out.print(SET_BG_COLOR_BLACK);
             out.print(String.valueOf(i) + "\n");
