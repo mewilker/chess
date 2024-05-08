@@ -1,11 +1,13 @@
 package ui;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Scanner;
 
 import chess.*;
 import chess.ChessGame.TeamColor;
+import model.UserGame;
 
 import java.io.PrintStream;
 
@@ -32,13 +34,28 @@ public class Format {
 
     }
 
-    public String entryfield(String prompt){
+    public String entryField(String prompt){
         out.print(SET_TEXT_BOLD);
         out.print(prompt + ":");
         out.print(RESET_TEXT_BOLD_FAINT);
         String result = getInput();
         out.print(SET_TEXT_COLOR_BLUE);
         return result;
+    }
+
+    public int idEntryField(String prompt){
+        String idString = entryField(prompt);
+        int id = 0;
+        do{
+            try{
+                id = Integer.parseInt(idString);
+            }
+            catch (NumberFormatException e){
+                errormsg(idString + " is not a valid id. Please try again.\n");
+                idString = getInput();
+            }
+        } while (id <= 0);
+        return id;
     }
 
     public void title(){
@@ -53,6 +70,18 @@ public class Format {
         out.print(RESET_TEXT_BOLD_FAINT);
         out.print(RESET_TEXT_BLINKING);
         out.print(SET_TEXT_COLOR_BLUE);
+    }
+
+    public void postLoginOptions(){
+        out.print("****OPTIONS****\n");
+        out.print("Type \"help\" for options\n");
+        out.print("Type \"logout\" to logout\n");
+        out.print("Type \"quit\" to exit\n"); //TODO IMPL
+        out.print("Type \"create\" to make a new game\n");
+        out.print("Type \"list\" to see the list of exsisting games\n");
+        out.print("Type \"join\" to join a game\n");
+        out.print("Type \"observe\" to watch a game\n");
+        out.print("Type \"pieces\" to change the pieces to letters, or change back\n");
     }
 
     public void toggleLetters(){
@@ -307,12 +336,12 @@ public class Format {
     }
     
     public ChessMove move(){
-        String position = entryfield("Start Position (number letter)");
+        String position = entryField("Start Position (number letter)");
         ChessPosition start = parseString(position);
         if (start != null) {
             ChessPiece piece = board.getPiece(start);
             if (piece != null) {
-                position = entryfield("End position (number letter)");
+                position = entryField("End position (number letter)");
                 ChessPosition end = parseString(position);
                 ChessMove move = null;
                 if (end != null) {
@@ -320,7 +349,7 @@ public class Format {
                             (piece.getTeamColor() == ChessGame.TeamColor.BLACK && end.getRow() == 1
                                     || piece.getTeamColor() == ChessGame.TeamColor.WHITE && end.getRow() == 8)) {
                         do {
-                            position = entryfield("Promotion (queen, knight, rook, bishop)");
+                            position = entryField("Promotion (queen, knight, rook, bishop)");
                             position = position.toUpperCase();
                             switch (position) {
                                 case "QUEEN" -> move = new ChessMove(start, end, ChessPiece.PieceType.QUEEN);
@@ -351,7 +380,7 @@ public class Format {
     }
 
     public void possibleMoves() {
-        String position = entryfield("Piece position (number letter)");
+        String position = entryField("Piece position (number letter)");
         ChessPosition pos = parseString(position);
         if (pos != null) {
             ChessPiece piece = board.getPiece(pos);
@@ -419,6 +448,47 @@ public class Format {
     public void notification(String msg){
         out.print(SET_TEXT_COLOR_MAGENTA);
         out.print(msg);
+        out.print(SET_TEXT_COLOR_BLUE);
+    }
+
+    public void printGamesTable(ArrayList<UserGame> games){
+        out.print(SET_TEXT_COLOR_MAGENTA);
+        out.print(SET_TEXT_BOLD);
+        out.print(String.valueOf("ID "));
+        out.print(SET_TEXT_COLOR_YELLOW);
+        out.print("GAME NAME ");
+        out.print(SET_TEXT_COLOR_WHITE);
+        out.print("WHITE TEAM ");
+        out.print(SET_BG_COLOR_WHITE);
+        out.print(SET_TEXT_COLOR_BLACK);
+        out.print("BLACK TEAM\n");
+        out.print(SET_BG_COLOR_BLACK);
+        out.print(RESET_TEXT_BOLD_FAINT);
+        for (UserGame game : games){
+            out.print(SET_TEXT_COLOR_MAGENTA);
+            out.print(String.valueOf(game.getGameID())+ " ");
+            out.print(SET_TEXT_COLOR_YELLOW);
+            out.print(game.getGameName()+ " ");
+            out.print(SET_TEXT_COLOR_WHITE);
+            String username = game.getWhiteUsername();
+            if (username != null){
+                out.print(username + " ");
+            }
+            else {
+                out.print("AVAILABLE ");
+            }
+            out.print(SET_BG_COLOR_WHITE);
+            out.print(SET_TEXT_COLOR_BLACK);
+            username = game.getBlackUsername();
+            if (username != null){
+                out.print(username);
+            }
+            else {
+                out.print("AVAILABLE");
+            }
+            out.print(SET_BG_COLOR_BLACK);
+            out.print("\n");
+        }
         out.print(SET_TEXT_COLOR_BLUE);
     }
 

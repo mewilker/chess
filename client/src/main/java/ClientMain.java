@@ -45,8 +45,8 @@ public class ClientMain {
     private static void prelogin(String input) throws Exception {
         while (!input.equals("quit")){
             if (input.equals("login")){
-                String name = format.entryfield("Username");
-                String password = format.entryfield("Password");
+                String name = format.entryField("Username");
+                String password = format.entryField("Password");
                 out.print(ERASE_SCREEN);
                 try{
                     ServerFacade login = new ServerFacade(HTTP + serverURL);
@@ -68,9 +68,9 @@ public class ClientMain {
                 format.title();
             }
             else if (input.equals("register")){
-                String username = format.entryfield("Username");
-                String email = format.entryfield("Email");
-                String password = format.entryfield("Password");
+                String username = format.entryField("Username");
+                String email = format.entryField("Email");
+                String password = format.entryField("Password");
                 out.print(ERASE_SCREEN);
                 try{
                     ServerFacade register = new ServerFacade(HTTP +serverURL);
@@ -110,21 +110,13 @@ public class ClientMain {
         String input = "help";
         while (!(input.equals("logout") || input.equals("quit"))){
             if (input.equals("help")){
-                out.print("****OPTIONS****\n");
-                out.print("Type \"help\" for options\n");
-                out.print("Type \"logout\" to logout\n");
-                out.print("Type \"quit\" to exit\n"); //TODO IMPL
-                out.print("Type \"create\" to make a new game\n");
-                out.print("Type \"list\" to see the list of exsisting games\n");
-                out.print("Type \"join\" to join a game\n");
-                out.print("Type \"observe\" to watch a game\n");
-                out.print("Type \"pieces\" to change the pieces to letters, or change back\n");
+                format.postLoginOptions();
             }
             else if (input.equals("pieces")){
                 format.toggleLetters();
             }
             else if (input.equals("create")){
-                String name = format.entryfield("Game Name");
+                String name = format.entryField("Game Name");
                 try{
                     ServerFacade create = new ServerFacade(HTTP +serverURL);
                     int id = create.createGame(name, token.getAuthToken());
@@ -142,45 +134,7 @@ public class ClientMain {
                 try{
                     ServerFacade list = new ServerFacade(HTTP +serverURL);
                     ArrayList<UserGame> games = (ArrayList<UserGame>) list.list(token.getAuthToken());
-                    //table headers
-                    out.print(SET_TEXT_COLOR_MAGENTA);
-                    out.print(SET_TEXT_BOLD);
-                    out.print(String.valueOf("ID "));
-                    out.print(SET_TEXT_COLOR_YELLOW);
-                    out.print("GAME NAME ");
-                    out.print(SET_TEXT_COLOR_WHITE);
-                    out.print("WHITE TEAM ");
-                    out.print(SET_BG_COLOR_WHITE);
-                    out.print(SET_TEXT_COLOR_BLACK);
-                    out.print("BLACK TEAM\n");
-                    out.print(SET_BG_COLOR_BLACK);
-                    out.print(RESET_TEXT_BOLD_FAINT);
-                    for (UserGame game : games){
-                        out.print(SET_TEXT_COLOR_MAGENTA);
-                        out.print(String.valueOf(game.getGameID())+ " ");
-                        out.print(SET_TEXT_COLOR_YELLOW);
-                        out.print(game.getGameName()+ " ");
-                        out.print(SET_TEXT_COLOR_WHITE);
-                        String username = game.getWhiteUsername();
-                        if (username != null){
-                            out.print(username + " ");
-                        }
-                        else {
-                            out.print("AVAILABLE ");
-                        }
-                        out.print(SET_BG_COLOR_WHITE);
-                        out.print(SET_TEXT_COLOR_BLACK);
-                        username = game.getBlackUsername();
-                        if (username != null){
-                            out.print(username);
-                        }
-                        else {
-                            out.print("AVAILABLE");
-                        }
-                        out.print(SET_BG_COLOR_BLACK);
-                        out.print("\n");
-                    }
-                    out.print(SET_TEXT_COLOR_BLUE);
+                    format.printGamesTable(games);
                 }
                 catch (URISyntaxException e){
                     format.errormsg(URI_ERROR_MSG);
@@ -190,19 +144,8 @@ public class ClientMain {
                 }
             }
             else if (input.equals("join")){
-                String idString = format.entryfield("Game ID");
-                int id = 0;
-                do{
-                    try{
-                        id = Integer.parseInt(idString);
-                    }
-                    catch (NumberFormatException e){
-                        format.errormsg(idString + " is not a valid id. Please try again.\n");
-                        idString = format.getInput();
-                    }
-                }
-                while (id <= 0);
-                String team = format.entryfield("Which side would you like to join? (white/black)");
+                int id =format.idEntryField("Game ID");
+                String team = format.entryField("Which side would you like to join? (white/black)");
                 team = team.toUpperCase();
                 while (!(team.equals("WHITE")||team.equals("BLACK"))){
                     format.errormsg(team + " is not a valid team. Please choose black or white.\n");
@@ -214,7 +157,7 @@ public class ClientMain {
                     join.join(token.getAuthToken(),id,team);
                     //WEBSOCKETS
                     WSClient websocket = new WSClient(WS +serverURL, messageHandler());
-                    JoinPlayerCommand joinSocket = new JoinPlayerCommand(token,team,id);
+                    ConnectCommand joinSocket = new ConnectCommand(token,team,id);
                     websocket.send(new Gson().toJson(joinSocket));
                     if (team.equals("BLACK")){
                         format.setOrientation(TeamColor.BLACK);
@@ -228,30 +171,13 @@ public class ClientMain {
                 catch(ConnectionException e){
                     format.errormsg(e.getMessage());
                 }
-                catch (Exception e){
-                    throw e;
-                }
 
             }
             else if (input.equals("observe")){
-                String idString = format.entryfield("GameID");
-                int id = 0;
-                do{
-                    try{
-                        id = Integer.parseInt(idString);
-                    }
-                    catch (NumberFormatException e){
-                        format.errormsg(idString + " is not a valid id. Please try again.\n");
-                        idString = format.getInput();
-                    }
-                } while (id <= 0);
-
+                int id = format.idEntryField("Game ID");
                 try{
-                    ServerFacade observe = new ServerFacade(HTTP +serverURL);
-                    observe.join(token.getAuthToken(), id, "");
-                    //WEBSOCKETS
                     WSClient websocket = new WSClient(WS +serverURL, messageHandler());
-                    JoinPlayerCommand joinSocket = new JoinPlayerCommand(token, "none", id);
+                    ConnectCommand joinSocket = new ConnectCommand(token, "none", id);
                     websocket.send(new Gson().toJson(joinSocket));
                     gameplayLoop(websocket, id, token);
                 }

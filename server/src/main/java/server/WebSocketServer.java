@@ -10,11 +10,8 @@ import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import chess.ChessBoard;
-import chess.ChessMove;
-import chess.ChessPosition;
 import chess.ChessGame;
 import chess.InvalidMoveException;
 import chess.ChessGame.TeamColor;
@@ -24,7 +21,6 @@ import websocket.commands.UserGameCommand.CommandType;
 import dataaccess.*;
 import model.UserGame;
 import model.AuthToken;
-import model.Deserializer;
 
 @WebSocket
 public class WebSocketServer {
@@ -44,7 +40,7 @@ public class WebSocketServer {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         //potential authtoken checking
         switch (command.getCommandType()) {
-            case CONNECT-> joinPlayer(new Gson().fromJson(message, JoinPlayerCommand.class), session);
+            case CONNECT-> joinPlayer(new Gson().fromJson(message, ConnectCommand.class), session);
             case LEAVE -> leave(new Gson().fromJson(message, LeaveCommand.class), session);
             case MAKE_MOVE-> move(new Gson().fromJson(message, MoveCommand.class), session);
             case RESIGN -> resign(new Gson().fromJson(message, ResignCommand.class), session);
@@ -76,23 +72,11 @@ public class WebSocketServer {
             gdao.updateGame(game);
         }
         catch (DataAccessException e){
-            ErrorCommand error = new ErrorCommand(id,token);
-            if (e.getMessage().equals("not found")){
-                error.httpError(id);
-            }
-            else{
-                error.changemsg(e.getMessage());
-            }
-            session.getRemote().sendString(new Gson().toJson(error));
+            authError(session, e, id, token);
             return;
         }
         catch(InvalidMoveException e){
-            ErrorCommand error = new ErrorCommand(id, token);
-            error.moveError();
-            if (e.getMessage() != null){
-                error.changemsg(e.getMessage());
-            }
-            session.getRemote().sendString(new Gson().toJson(error));
+            moveError(session, e, id, token);
             return;
         }
 
@@ -109,7 +93,27 @@ public class WebSocketServer {
         session.getRemote().sendString(new Gson().toJson(notify));
     }
 
-    
+    private static void authError(Session session, DataAccessException e, int id, AuthToken token) throws IOException {
+        ErrorCommand error = new ErrorCommand(id, token);
+        if (e.getMessage().equals("not found")){
+            error.httpError(id);
+        }
+        else{
+            error.changemsg(e.getMessage());
+        }
+        session.getRemote().sendString(new Gson().toJson(error));
+    }
+
+    private static void moveError(Session session, InvalidMoveException e, int id, AuthToken token) throws IOException {
+        ErrorCommand error = new ErrorCommand(id, token);
+        error.moveError();
+        if (e.getMessage() != null){
+            error.changemsg(e.getMessage());
+        }
+        session.getRemote().sendString(new Gson().toJson(error));
+    }
+
+
     private void move(MoveCommand command, Session session) throws IOException{
         AuthToken token = null;
         int id = command.getid();
@@ -151,23 +155,11 @@ public class WebSocketServer {
 
         }
         catch (DataAccessException e){
-            ErrorCommand error = new ErrorCommand(id,token);
-            if (e.getMessage().equals("not found")){
-                error.httpError(id);
-            }
-            else{
-                error.changemsg(e.getMessage());
-            }
-            session.getRemote().sendString(new Gson().toJson(error));
+            authError(session, e, id, token);
             return;
         }
         catch(InvalidMoveException e){
-            ErrorCommand error = new ErrorCommand(id, token);
-            error.moveError();
-            if (e.getMessage() != null){
-                error.changemsg(e.getMessage());
-            }
-            session.getRemote().sendString(new Gson().toJson(error));
+            moveError(session, e, id, token);
             return;
         }
 
@@ -200,14 +192,7 @@ public class WebSocketServer {
             token = validate(id, game, command);
         }
         catch (DataAccessException e) {
-            ErrorCommand error = new ErrorCommand(id,token);
-            if (e.getMessage().equals("not found")){
-                error.httpError(id);
-            }
-            else{
-                error.changemsg(e.getMessage());
-            }
-            session.getRemote().sendString(new Gson().toJson(error));
+            authError(session, e, id, token);
             return;
         }
 
@@ -229,7 +214,7 @@ public class WebSocketServer {
     }
 
 
-    private void joinPlayer(JoinPlayerCommand command, Session session) throws IOException{
+    private void joinPlayer(ConnectCommand command, Session session) throws IOException{
         //save session to game id if valid
         AuthToken token = null;
         int id = command.getid();
@@ -247,14 +232,7 @@ public class WebSocketServer {
             gdao.updateGame(game);
         }
         catch (DataAccessException e) {
-            ErrorCommand error = new ErrorCommand(id,token);
-            if (e.getMessage().equals("not found")){
-                error.httpError(id);
-            }
-            else{
-                error.changemsg(e.getMessage());
-            }
-            session.getRemote().sendString(new Gson().toJson(error));
+            authError(session, e, id, token);
             return;
         }
         individuals.put(token, session);
@@ -292,7 +270,7 @@ public class WebSocketServer {
         AuthToken token;
         token = adao.findToken(command.getToken());
         if (command.getCommandType().equals(CommandType.CONNECT)){
-            JoinPlayerCommand join = (JoinPlayerCommand) command;
+            ConnectCommand join = (ConnectCommand) command;
             if (join.getPlayerColor() != null) {
                 switch (join.getPlayerColor()) {
                     case TeamColor.WHITE:
