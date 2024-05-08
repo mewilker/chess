@@ -7,12 +7,12 @@ public class JoinPlayerCommand extends UserGameCommand{
     private TeamColor playerColor;
     
     public JoinPlayerCommand(AuthToken token, TeamColor team, int id){
-        super(CommandType.JOIN_PLAYER, id, token);
+        super(CommandType.CONNECT, id, token);
         this.playerColor = team;
     }
 
     public JoinPlayerCommand(AuthToken token, String team, int id){
-        super(CommandType.JOIN_PLAYER, id, token);
+        super(CommandType.CONNECT, id, token);
         switch (team) {
             case "WHITE" -> this.playerColor = TeamColor.WHITE;
             case "BLACK" -> this.playerColor = TeamColor.BLACK;

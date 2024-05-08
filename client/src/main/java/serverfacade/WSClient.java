@@ -9,13 +9,13 @@ WSClient extends Endpoint {
     private MessageHandler handler;
 
     public WSClient () throws Exception {
-        URI uri = new URI("http://localhost:8080/connect");
+        URI uri = new URI("http://localhost:8080/ws");
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         this.session = container.connectToServer(this, uri);
     }
 
     public WSClient(String url, MessageHandler handler) throws Exception{
-        URI uri = new URI(url+"/connect");
+        URI uri = new URI(url+"/ws");
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         this.session = container.connectToServer(this, uri);
         this.handler = handler;

@@ -1,5 +1,6 @@
 package passoff.server;
 
+import chess.ChessPiece;
 import com.google.gson.GsonBuilder;
 
 public class TestFactory {
@@ -24,6 +25,7 @@ public class TestFactory {
          * or deserialize chess objects like ChessMove, you may add type adapters here.
          */
         GsonBuilder builder = new GsonBuilder();
+        //builder.registerTypeAdapter(ChessPiece.class, new model.Deserializer());
         // builder.registerTypeAdapter(ChessMove.class, /*type adapter or json serializer */);
         return builder;
     }

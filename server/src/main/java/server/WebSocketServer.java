@@ -44,12 +44,9 @@ public class WebSocketServer {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         //potential authtoken checking
         switch (command.getCommandType()) {
-            case JOIN_PLAYER-> joinPlayer(new Gson().fromJson(message, JoinPlayerCommand.class), session);
-            case JOIN_OBSERVER -> joinObserver(new Gson().fromJson(message, ObserverCommand.class), session);
+            case CONNECT-> joinPlayer(new Gson().fromJson(message, JoinPlayerCommand.class), session);
             case LEAVE -> leave(new Gson().fromJson(message, LeaveCommand.class), session);
-            case MAKE_MOVE-> move(new GsonBuilder().registerTypeAdapter(ChessMove.class,
-                new Deserializer()).registerTypeAdapter(ChessPosition.class, 
-                new Deserializer()).create().fromJson(message, MoveCommand.class), session);
+            case MAKE_MOVE-> move(new Gson().fromJson(message, MoveCommand.class), session);
             case RESIGN -> resign(new Gson().fromJson(message, ResignCommand.class), session);
             default -> System.out.print(message);
         }
@@ -273,7 +270,11 @@ public class WebSocketServer {
             list.add(token);
             runningGames.put(id, list);
             NotifyCommand notification = new NotifyCommand(id, token);
-            notification.join(token.getUserName(),command.getPlayerColor());
+            if (command.getPlayerColor() == null){
+                notification.observe(token.getUserName());
+            } else {
+                notification.join(token.getUserName(), command.getPlayerColor());
+            }
             notifyOthers(list, token, notification);
         }
         //send board
@@ -287,77 +288,24 @@ public class WebSocketServer {
         session.getRemote().sendString(new Gson().toJson(load)); 
     }
 
-    private void joinObserver(ObserverCommand command, Session session) throws IOException{
-        AuthToken token = null;
-        int id = command.getid();
-        UserGame game = null;
-        ChessGame chess = null;
-        try{
-            game = gdao.find(id);
-            token = validate(id, game, command);
-            chess = game.getGame();
-            //if no team turn set, set teamturn to white
-            if (chess.getTeamTurn()==null){
-                chess.setTeamTurn(TeamColor.WHITE);
-                game.updateGame(chess);
-            }
-            gdao.updateGame(game);
-        }
-        catch (DataAccessException e) {
-            ErrorCommand error = new ErrorCommand(id,token);
-            if (e.getMessage().equals("not found")){
-                error.httpError(id);
-            }
-            else{
-                error.changemsg(e.getMessage());
-            }
-            session.getRemote().sendString(new Gson().toJson(error));
-            return;
-        }
-        individuals.put(token, session);
-        List<AuthToken> list = runningGames.get(id);
-        if (list==null){
-            list = new ArrayList<>();
-            list.add(token);
-            runningGames.put(id, list); 
-            
-        }
-        else{
-            //notify other players or observers
-            list.add(token);
-            runningGames.put(id, list);
-            NotifyCommand notification = new NotifyCommand(id, token);
-            notification.observe(token.getUserName());
-            notifyOthers(list, token, notification);
-        }
-        ChessGame g = game.getGame();
-        boolean check = g.isInCheck(g.getTeamTurn());
-        boolean checkmate = g.isInCheckmate(g.getTeamTurn());
-        LoadBoard load = new LoadBoard((ChessBoard) chess.getBoard());
-        if (check){load.check();}
-        if (checkmate){load.checkmate();}
-        load.setTurn(g.getTeamTurn());        
-        session.getRemote().sendString(new Gson().toJson(load));
-    }
-
     private AuthToken validate(int id, UserGame game, UserGameCommand command) throws DataAccessException{
         AuthToken token;
         token = adao.findToken(command.getToken());
-        if (command.getCommandType().equals(CommandType.JOIN_PLAYER)){
+        if (command.getCommandType().equals(CommandType.CONNECT)){
             JoinPlayerCommand join = (JoinPlayerCommand) command;
-            switch (join.getPlayerColor()) {
-                case TeamColor.WHITE: 
-                    if (game.getWhiteUsername() ==null || !game.getWhiteUsername().equals(token.getUserName())){
-                        throw new DataAccessException("Something went wrong joining the game");
-                    }
-                break;
-                case TeamColor.BLACK:
-                    if (game.getBlackUsername() == null || !game.getBlackUsername().equals(token.getUserName())){
-                        throw new DataAccessException("Something went wrong joining the game");
+            if (join.getPlayerColor() != null) {
+                switch (join.getPlayerColor()) {
+                    case TeamColor.WHITE:
+                        if (game.getWhiteUsername() == null || !game.getWhiteUsername().equals(token.getUserName())) {
+                            throw new DataAccessException("Something went wrong joining the game");
                         }
-                    break;
-                default:
-                    throw new DataAccessException("No team was specified");
+                        break;
+                    case TeamColor.BLACK:
+                        if (game.getBlackUsername() == null || !game.getBlackUsername().equals(token.getUserName())) {
+                            throw new DataAccessException("Something went wrong joining the game");
+                        }
+                        break;
+                }
             }
         }
         else if (command.getCommandType().equals(CommandType.LEAVE)){

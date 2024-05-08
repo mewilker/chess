@@ -251,7 +251,7 @@ public class ClientMain {
                     observe.join(token.getAuthToken(), id, "");
                     //WEBSOCKETS
                     WSClient websocket = new WSClient(WS +serverURL, messageHandler());
-                    ObserverCommand joinSocket = new ObserverCommand(id,token);
+                    JoinPlayerCommand joinSocket = new JoinPlayerCommand(token, "none", id);
                     websocket.send(new Gson().toJson(joinSocket));
                     gameplayLoop(websocket, id, token);
                 }
