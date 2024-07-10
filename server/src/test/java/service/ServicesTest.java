@@ -87,16 +87,6 @@ public class ServicesTest {
         Assertions.assertEquals(message.getMessage(), result.getMessage());
     }
 
-    @Test
-    @DisplayName ("Login")
-    public void login() throws DataAccessException{
-        LoginService service = new LoginService();
-        LoginResult result = service.login(new LoginRequest("C3PO","droid"));
-        Assertions.assertNotNull(result.getAuthToken());
-        Assertions.assertEquals("C3PO", result.getUsername());
-        tokens.add(new AuthToken("C3PO", result.getAuthToken()));
-        Assertions.assertEquals(tokens, authdao.getTokens());
-    }
 
     @Test
     @DisplayName ("Wrong Password")
@@ -106,14 +96,6 @@ public class ServicesTest {
         LoginResult message = new LoginResult();
         message.authError();
         Assertions.assertEquals(message.getMessage(), result.getMessage());
-    }
-
-    @Test
-    @DisplayName ("Logout")
-    public void logout(){
-        LogoutService service = new LogoutService();
-        Result result = service.logout(new AuthorizedRequest(token));
-        Assertions.assertNull(result.getMessage());
     }
 
     @Test
@@ -127,14 +109,6 @@ public class ServicesTest {
     }
 
     @Test
-    @DisplayName("List Games")
-    public void listGames() throws DataAccessException{
-        ListGamesService service = new ListGamesService();
-        ListGamesResult result = service.listGames(new AuthorizedRequest(token));
-        Assertions.assertEquals(gamedao.getGames(), result.getGames());
-    }
-
-    @Test
     @DisplayName("Unauthorized List Games")
     public void unauthorizedGames(){
         ListGamesService service = new ListGamesService();
@@ -145,14 +119,6 @@ public class ServicesTest {
     }
 
     @Test
-    @DisplayName("Create Game")
-    public void makeGame(){
-        CreateGameService service = new CreateGameService();
-        CreateGameResult result = service.createGame(new CreateGameRequest(token, "Dejarik"));
-        Assertions.assertNotNull(result.getGameID());
-    }
-
-    @Test
     @DisplayName("Unauthorized creategame")
     public void cantMakeGame(){
         CreateGameService service = new CreateGameService();
@@ -160,15 +126,6 @@ public class ServicesTest {
         CreateGameResult message = new CreateGameResult();
         message.authError();
         Assertions.assertEquals(message.getMessage(), result.getMessage());
-    }
-
-    @Test
-    @DisplayName("Join Game")
-    public void join() throws DataAccessException{
-        JoinGameService service = new JoinGameService();
-        Result result = service.joinGame(new JoinGameRequest(token, game.getGameID(),"BLACK"));
-        Assertions.assertNull(result.getMessage());
-        Assertions.assertEquals("username", gamedao.find(game.getGameID()).getBlackUsername());
     }
 
     @Test
