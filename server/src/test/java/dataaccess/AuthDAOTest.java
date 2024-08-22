@@ -21,6 +21,7 @@ public class AuthDAOTest {
     public static void init() throws DataAccessException{
         adao = new AuthDAO();
         db = new DatabaseManager();
+        throw new DataAccessException("Bogus 2 electric boogaloo");
     }
 
     @BeforeEach
