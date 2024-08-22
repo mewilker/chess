@@ -41,7 +41,7 @@ public class WebSocketServer {
         //potential authtoken checking
         switch (command.getCommandType()) {
             case CONNECT-> joinPlayer(new Gson().fromJson(message, ConnectCommand.class), session);
-            case LEAVE -> leave(new Gson().fromJson(message, LeaveCommand.class), session);
+            //case LEAVE -> leave(new Gson().fromJson(message, LeaveCommand.class), session);
             case MAKE_MOVE-> move(new Gson().fromJson(message, MoveCommand.class), session);
             case RESIGN -> resign(new Gson().fromJson(message, ResignCommand.class), session);
             default -> System.out.print(message);
