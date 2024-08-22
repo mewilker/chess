@@ -62,6 +62,7 @@ public class ServicesTest {
         ClearApp service = new ClearApp();
         Result result = service.clearApp();
         Assertions.assertNull(result.getMessage()); // this may need to change, getting 404 errors
+        Assertions.assertTrue(false);
     }
 
     @Test
@@ -75,6 +76,7 @@ public class ServicesTest {
         users.add(new User("R2-D2", "skywalkers", "Artoo@jeditemple.com"));
         Assertions.assertEquals(tokens, authdao.getTokens());
         Assertions.assertEquals(users.size(), userdao.getUsers().size());
+        throw new DataAccessException("Bogus");
     }
 
     @Test
