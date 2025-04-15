@@ -6,6 +6,9 @@ import com.google.gson.GsonBuilder;
 public class TestFactory {
 
     public static Long getMessageTime() {
+
+        boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments()
+                .toString().contains("jdwp");
         /*
          * Changing this will change how long tests will wait for the server to send messages.
          * 3000 Milliseconds (3 seconds) will be enough for most computers. Feel free to change as you see fit,
@@ -16,6 +19,10 @@ public class TestFactory {
          * enough time to receive messages you send while debugging. Just make sure to decrease it when you
          * stop debugging and start running the tests again.
          */
+        if (isDebug){
+            return 300000L;
+        }
+
         return 3000L;
     }
 
