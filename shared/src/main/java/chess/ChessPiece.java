@@ -232,12 +232,12 @@ public class ChessPiece {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        ChessPiece that=(ChessPiece) o;
-        return teamColor == that.teamColor && pieceType == that.pieceType;
+        if (!(o instanceof ChessPiece piece)) return false;
+        return teamColor == piece.teamColor && pieceType == piece.pieceType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(teamColor, pieceType, moves);
+        return Objects.hash(teamColor, pieceType);
     }
 }
