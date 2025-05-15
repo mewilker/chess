@@ -83,7 +83,7 @@ public class ChessBoard {
             case BISHOP -> board[position.getRow()-1][position.getColumn()-1] = new Bishop(piece.getTeamColor());
             case ROOK -> board[position.getRow()-1][position.getColumn()-1] = new Rook(piece.getTeamColor());
             case PAWN -> board[position.getRow()-1][position.getColumn()-1] = new Pawn(piece.getTeamColor());
-            default -> board[position.getRow()-1][position.getColumn()-1]= piece;
+            case null, default -> board[position.getRow()-1][position.getColumn()-1]= piece;
         }
         if(piece.getTeamColor()==TeamColor.WHITE){
             white.add(position);
