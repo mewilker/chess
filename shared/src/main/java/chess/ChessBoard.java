@@ -76,6 +76,10 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
+        if (piece == null){
+            board[position.getRow()-1][position.getColumn()-1] = null;
+            return;
+        }
         switch (piece.getPieceType()){
             case KING -> board[position.getRow()-1][position.getColumn()-1] = new King(piece.getTeamColor());
             case QUEEN -> board[position.getRow()-1][position.getColumn()-1] = new Queen(piece.getTeamColor());
