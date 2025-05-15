@@ -26,14 +26,19 @@ public class LoginHandler {
             return gson.toJson(result);
         }
         LoginResult result = new LoginService().login(request);
-        if (result.getMessage() != null){
+        if (result.getMessage() != null) {
             LoginResult message = new LoginResult();
             message.authError();
-            if (message.getMessage().equals(result.getMessage())){
+            if (message.getMessage().equals(result.getMessage())) {
                 res.status(401);
-            }
-            else {
-                res.status(500);
+            } else {
+                message.requestError();
+                if (message.getMessage().equals(result.getMessage())) {
+                    res.status(400);
+                }
+                else{
+                    res.status(500);
+                }
             }
         }
 
