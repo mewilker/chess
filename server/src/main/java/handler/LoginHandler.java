@@ -19,12 +19,6 @@ public class LoginHandler {
         catch(JsonSyntaxException e){
             request = null;
         }
-        if (!request.valid()){
-            Result result = new Result();
-            result.requestError();
-            res.status(400);
-            return gson.toJson(result);
-        }
         LoginResult result = new LoginService().login(request);
         if (result.getMessage() != null) {
             LoginResult message = new LoginResult();
