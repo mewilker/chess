@@ -20,6 +20,7 @@ public class TestFactory {
          * stop debugging and start running the tests again.
          */
         if (isDebug){
+            System.out.println("debug");
             return 300000L;
         }
 
