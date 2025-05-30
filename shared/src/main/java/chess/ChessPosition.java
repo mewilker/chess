@@ -92,15 +92,19 @@ public class ChessPosition {
     @Override
     /**@return true if row and column are the same */
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ChessPosition other = (ChessPosition) obj;
-        if (row != other.row)
+        if (row != other.row) {
             return false;
+        }
       return column == other.column;
     }
 

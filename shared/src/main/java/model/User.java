@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 /**user has a username, password and email */
 public class User {
     private String userName;
@@ -46,30 +48,11 @@ public class User {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        User other = (User) obj;
-        if (userName == null) {
-            if (other.userName != null)
-                return false;
-        } else if (!userName.equals(other.userName))
-            return false;
-        if (password == null) {
-            if (other.password != null)
-                return false;
-        } else if (!password.equals(other.password))
-            return false;
-        if (email == null) {
-            if (other.email != null)
-                return false;
-        } else if (!email.equals(other.email))
-            return false;
-        return true;
+    public boolean equals(Object o) {
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
+        User user = (User) o;
+        return Objects.equals(userName, user.userName) && Objects.equals(password, user.password)
+                && Objects.equals(email, user.email);
     }
-
 }

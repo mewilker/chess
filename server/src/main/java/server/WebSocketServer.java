@@ -224,11 +224,6 @@ public class WebSocketServer {
             game = gdao.find(id);
             token = validate(id, game, command);
             chess = game.getGame();
-            //if no team turn set, set teamturn to white
-            if (chess.getTeamTurn()==null){
-                chess.setTeamTurn(TeamColor.WHITE);
-                game.updateGame(chess);
-            }
             gdao.updateGame(game);
         }
         catch (DataAccessException e) {
@@ -302,7 +297,10 @@ public class WebSocketServer {
     private void notifyAll(List<AuthToken> list, LoadBoard load) throws IOException{
         for (AuthToken t : list){
             Session s = individuals.get(t);
-            s.getRemote().sendString(new Gson().toJson(load));
+            if (s.isOpen()){
+                s.getRemote().sendString(new Gson().toJson(load));
+            }
+
         }
     }
 
@@ -310,7 +308,13 @@ public class WebSocketServer {
         for (AuthToken t : list){
             if (!t.equals(token)){
                 Session s = individuals.get(t);
-                s.getRemote().sendString(new Gson().toJson(notification));
+                if (s.isOpen()){
+                    s.getRemote().sendString(new Gson().toJson(notification));
+                }
+                else{
+                    list.remove(t);
+                    individuals.remove(t);
+                }
             }
         }
     }

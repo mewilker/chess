@@ -68,21 +68,24 @@ public class ChessMove {
         }
         ChessMove other = (ChessMove) obj;
         if (startPos == null) {
-            if (other.startPos != null)
+            if (other.startPos != null) {
                 return false;
+            }
         }
         else if (!startPos.equals(other.startPos)){
             return false;
         }
         if (endPos == null) {
-            if (other.endPos != null)
+            if (other.endPos != null) {
                 return false;
+            }
         }
         else if (!endPos.equals(other.endPos)){
             return false;
         }
-        if (promotion != other.promotion)
+        if (promotion != other.promotion) {
             return false;
+        }
         return true;
     }
 
