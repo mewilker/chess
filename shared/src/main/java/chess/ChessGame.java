@@ -121,7 +121,7 @@ public class ChessGame {
                 if (pawn.getLastPosition()!= null){
                     //fix nesting here
                     ChessMove myPos1 = getChessMove(myPos, pawn);
-                    if (myPos1 != null) return myPos1;
+                    if (myPos1 != null) {return myPos1;}
                 }
             }
         }
