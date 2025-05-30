@@ -37,11 +37,6 @@ public class AuthDAO {
         db.closeConnection(conn);
         return result;
         
-        /**Collection<AuthToken> copy = new HashSet<>();
-        for (AuthToken token : tokens){
-            copy.add(token);
-        }
-        return copy;*/
     }
     
     /**Removes all auth tokens from the database */
