@@ -152,42 +152,51 @@ public class ChessGame {
                 for (ChessMove move : rook.pieceMoves(playBoard.clone(),position.clone())){
                     ChessPosition compareToKing = move.getEndPosition();
                     ChessBoard copyBoard = playBoard.clone();
-                    if (compareToKing.getColumn()==kingPos.getColumn()+1 && playBoard.getPiece(compareToKing)==null){
-                        //simulate move and ensure rook is not in danger
-                        //king will get caught later
-                        //fix nesting here
-                        ChessPosition endPos = new ChessPosition(kingPos.getRow(), kingPos.getColumn()+1);
-                        try{
-                            playBoard.movePiece(new ChessMove(position, endPos, null));
-                            if (!isInDanger(endPos)){
-                                ChessPosition kingJump = kingPos.clone();
-                                kingJump.right(2);
-                                return new ChessMove(kingPos, kingJump, null);
-                            }
-                        } catch (InvalidMoveException e){
-                            return null;
-                        }
-                        finally {
-                            setBoard(copyBoard);
-                        }
-                    }
-                    if (compareToKing.getColumn() == kingPos.getColumn()-1 && playBoard.getPiece(compareToKing)==null){
-                        ChessPosition endPos = new ChessPosition(kingPos.getRow(), kingPos.getColumn()-1);
-                        try{
-                            playBoard.movePiece(new ChessMove(position, endPos, null));
-                            if (!isInDanger(endPos)){
-                                ChessPosition kingJump = kingPos.clone();
-                                kingJump.left(2);
-                                return new ChessMove(kingPos, kingJump, null);
-                            }
-                        } catch (InvalidMoveException e){
-                            return null;
-                        }
-                        finally {
-                            setBoard(copyBoard);
-                        }
+                    ChessMove potentialMove = isRookInDanger(compareToKing, kingPos, copyBoard, position);
+                    if (potentialMove != null){
+                        return potentialMove;
                     }
                 }
+            }
+        }
+        return null;
+    }
+
+    private ChessMove isRookInDanger(ChessPosition compareToKing, ChessPosition kingPos, ChessBoard copyBoard,
+                                ChessPosition position){
+        if (compareToKing.getColumn()==kingPos.getColumn()+1 && playBoard.getPiece(compareToKing)==null){
+            //simulate move and ensure rook is not in danger
+            //king will get caught later
+            //fix nesting here
+            ChessPosition endPos = new ChessPosition(kingPos.getRow(), kingPos.getColumn()+1);
+            try{
+                playBoard.movePiece(new ChessMove(position, endPos, null));
+                if (!isInDanger(endPos)){
+                    ChessPosition kingJump = kingPos.clone();
+                    kingJump.right(2);
+                    return new ChessMove(kingPos, kingJump, null);
+                }
+            } catch (InvalidMoveException e){
+                return null;
+            }
+            finally {
+                setBoard(copyBoard);
+            }
+        }
+        if (compareToKing.getColumn() == kingPos.getColumn()-1 && playBoard.getPiece(compareToKing)==null){
+            ChessPosition endPos = new ChessPosition(kingPos.getRow(), kingPos.getColumn()-1);
+            try{
+                playBoard.movePiece(new ChessMove(position, endPos, null));
+                if (!isInDanger(endPos)){
+                    ChessPosition kingJump = kingPos.clone();
+                    kingJump.left(2);
+                    return new ChessMove(kingPos, kingJump, null);
+                }
+            } catch (InvalidMoveException e){
+                return null;
+            }
+            finally {
+                setBoard(copyBoard);
             }
         }
         return null;

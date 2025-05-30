@@ -319,25 +319,7 @@ public class Format {
                 ChessPosition end = parseString(position);
                 ChessMove move = null;
                 if (end != null) {
-                    if (piece.getPieceType() == ChessPiece.PieceType.PAWN &&
-                            (piece.getTeamColor() == ChessGame.TeamColor.BLACK && end.getRow() == 1
-                                    || piece.getTeamColor() == ChessGame.TeamColor.WHITE && end.getRow() == 8)) {
-                        do {
-                            position = entryField("Promotion (queen, knight, rook, bishop)");
-                            position = position.toUpperCase();
-                            switch (position) {
-                                case "QUEEN" -> move = new ChessMove(start, end, ChessPiece.PieceType.QUEEN);
-                                case "KNIGHT" -> move = new ChessMove(start, end, ChessPiece.PieceType.KNIGHT);
-                                case "ROOK" -> move = new ChessMove(start, end, ChessPiece.PieceType.ROOK);
-                                case "BISHOP" -> move = new ChessMove(start, end, ChessPiece.PieceType.BISHOP);
-                                default -> errormsg(position + "is not a valid promotion.");
-                            }
-                        } while (move == null);
-                    }
-                    else {
-                        move = new ChessMove(start, end, null);
-                    }
-                    return move;
+                    return getChessMove(piece, end, move, start);
                 }
                 else {
                     errormsg("Not a valid end position!\n");
@@ -351,6 +333,29 @@ public class Format {
             errormsg("Not a valid start position!\n");
         }
         return null;
+    }
+
+    private ChessMove getChessMove(ChessPiece piece, ChessPosition end, ChessMove move, ChessPosition start) {
+        String position;
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN &&
+                (piece.getTeamColor() == TeamColor.BLACK && end.getRow() == 1
+                        || piece.getTeamColor() == TeamColor.WHITE && end.getRow() == 8)) {
+            do {
+                position = entryField("Promotion (queen, knight, rook, bishop)");
+                position = position.toUpperCase();
+                switch (position) {
+                    case "QUEEN" -> move = new ChessMove(start, end, ChessPiece.PieceType.QUEEN);
+                    case "KNIGHT" -> move = new ChessMove(start, end, ChessPiece.PieceType.KNIGHT);
+                    case "ROOK" -> move = new ChessMove(start, end, ChessPiece.PieceType.ROOK);
+                    case "BISHOP" -> move = new ChessMove(start, end, ChessPiece.PieceType.BISHOP);
+                    default -> errormsg(position + "is not a valid promotion.");
+                }
+            } while (move == null);
+        }
+        else {
+            move = new ChessMove(start, end, null);
+        }
+        return move;
     }
 
     public void possibleMoves() {
