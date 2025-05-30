@@ -119,18 +119,25 @@ public class ChessGame {
             if (opponent != null && opponent.getTeamColor() != checkMe.getTeamColor() && opponent.pieceType == ChessPiece.PieceType.PAWN) {
                 Pawn pawn=(Pawn) opponent;
                 if (pawn.getLastPosition()!= null){
-                    if (pawn.getLastPosition().getRow() == 2 && pawn.getTeamColor() == TeamColor.WHITE
-                            || pawn.getLastPosition().getRow() == 7 && pawn.getTeamColor() == TeamColor.BLACK) {
-                        ChessPosition endPos = pawn.getLastPosition().clone();
-                        if (pawn.getLastPosition().getRow() == 2) {
-                            endPos.up(1);
-                        } else {
-                            endPos.down(1);
-                        }
-                        return new ChessMove(myPos, endPos, null);
-                    }
+                    //fix nesting here
+                    ChessMove myPos1 = getChessMove(myPos, pawn);
+                    if (myPos1 != null) return myPos1;
                 }
             }
+        }
+        return null;
+    }
+
+    private static ChessMove getChessMove(ChessPosition myPos, Pawn pawn) {
+        if (pawn.getLastPosition().getRow() == 2 && pawn.getTeamColor() == TeamColor.WHITE
+                || pawn.getLastPosition().getRow() == 7 && pawn.getTeamColor() == TeamColor.BLACK) {
+            ChessPosition endPos = pawn.getLastPosition().clone();
+            if (pawn.getLastPosition().getRow() == 2) {
+                endPos.up(1);
+            } else {
+                endPos.down(1);
+            }
+            return new ChessMove(myPos, endPos, null);
         }
         return null;
     }
@@ -148,6 +155,7 @@ public class ChessGame {
                     if (compareToKing.getColumn()==kingPos.getColumn()+1 && playBoard.getPiece(compareToKing)==null){
                         //simulate move and ensure rook is not in danger
                         //king will get caught later
+                        //fix nesting here
                         ChessPosition endPos = new ChessPosition(kingPos.getRow(), kingPos.getColumn()+1);
                         try{
                             playBoard.movePiece(new ChessMove(position, endPos, null));
@@ -211,18 +219,23 @@ public class ChessGame {
                     playBoard.movePiece(move);
                     advanceTurn();
                     enPassentAvailable = false;
-                    if (!trackmove){
-                        Pawn pawn = (Pawn) playBoard.getPiece(move.getEndPosition().clone());
-                        if (pawn.hasMoved(playBoard, move.getEndPosition().clone())){
-                            enPassentAvailable = true;
-                        }
-                    }
+                    //fix nesting here
+                    extracted(move, trackmove);
                     return;
                 }
             }
         }
         if (invalidMove){
             throw new InvalidMoveException();
+        }
+    }
+
+    private void extracted(ChessMove move, boolean trackmove) {
+        if (!trackmove){
+            Pawn pawn = (Pawn) playBoard.getPiece(move.getEndPosition().clone());
+            if (pawn.hasMoved(playBoard, move.getEndPosition().clone())){
+                enPassentAvailable = true;
+            }
         }
     }
 
